@@ -12,7 +12,7 @@
             --primary: #0c4a6e;
             --secondary: #0284c7;
             --medical-red: #be123c;
-            --sidebar-bg: #0f172a;
+            --sidebar-bg: #0f172a; /* Fallback color */
             --bg-light: #f8fafc;
             --border: #e2e8f0;
             --high-alert-bg: #fff1f2;
@@ -20,20 +20,55 @@
 
         body { font-family: 'Inter', sans-serif; background-color: var(--bg-light); margin: 0; display: flex; min-height: 100vh; }
         
-        /* Layout */
-        nav { width: 260px; background: var(--sidebar-bg); color: white; position: fixed; height: 100vh; display: flex; flex-direction: column; z-index: 1000; }
+        /* Layout & Sidebar Design Update */
+        nav { 
+            width: 260px; 
+            /* This creates the dark blue overlay ON TOP of your background image */
+            background: linear-gradient(to bottom, rgba(15, 23, 42, 0.92), rgba(12, 74, 110, 0.85)), url('images/tdmh-background.jpg');
+            background-size: cover;
+            background-position: center;
+            color: white; 
+            position: fixed; 
+            height: 100vh; 
+            display: flex; 
+            flex-direction: column; 
+            z-index: 1000; 
+            box-shadow: 4px 0 20px rgba(0,0,0,0.2);
+        }
+
         main { margin-left: 260px; flex-grow: 1; padding: 40px; width: 100%; }
         .app-card { background: white; border-radius: 12px; padding: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); border-top: 8px solid var(--primary); }
 
         /* Navigation */
-        .nav-brand { padding: 30px 20px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .nav-brand { 
+            padding: 40px 20px 30px; 
+            text-align: center; 
+            border-bottom: 1px solid rgba(255,255,255,0.1); 
+        }
+        
+        /* Logo Styling */
+        .nav-logo {
+            width: 100px; /* Adjust size as needed */
+            height: auto;
+            margin-bottom: 15px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+        }
+
         .nav-links { list-style: none; padding: 20px 0; margin: 0; }
-        .nav-item { padding: 15px 25px; display: flex; align-items: center; gap: 12px; cursor: pointer; color: #94a3b8; transition: 0.2s; }
-        .nav-item.active { color: white; background: rgba(255,255,255,0.05); border-left: 4px solid var(--secondary); }
+        .nav-item { padding: 15px 25px; display: flex; align-items: center; gap: 12px; cursor: pointer; color: #cbd5e1; transition: 0.3s; }
+        
+        /* Active State with Glow */
+        .nav-item.active { 
+            color: white; 
+            background: rgba(255,255,255,0.1); 
+            border-left: 4px solid #38bdf8;
+            backdrop-filter: blur(5px);
+        }
+        .nav-item:hover { color: white; background: rgba(255,255,255,0.05); }
 
         /* Table & UI */
         .view-section { display: none; }
-        .view-section.active { display: block; animation: fadeIn 0.3s ease; }
+        .view-section.active { display: block; animation: fadeIn 0.4s ease; }
         table { width: 100%; border-collapse: collapse; margin-top: 10px; }
         th { background: var(--primary); color: white; padding: 12px; text-align: left; font-size: 11px; text-transform: uppercase; position: sticky; top: 0; }
         td { padding: 10px; border-bottom: 1px solid #f1f5f9; font-size: 13px; }
@@ -44,7 +79,8 @@
         .exp-input { width: 140px; font-size: 12px; border: 1px solid #cbd5e1; border-radius: 4px; }
 
         .search-bar { width: 100%; padding: 12px 40px; border: 1px solid var(--border); border-radius: 8px; margin-bottom: 20px; box-sizing: border-box;}
-        .btn-submit { background: var(--secondary); color: white; padding: 15px; border: none; border-radius: 8px; font-weight: 700; width: 100%; cursor: pointer; font-size: 16px; margin-top: 20px; }
+        .btn-submit { background: var(--secondary); color: white; padding: 15px; border: none; border-radius: 8px; font-weight: 700; width: 100%; cursor: pointer; font-size: 16px; margin-top: 20px; transition: 0.2s; }
+        .btn-submit:hover { background: var(--primary); transform: translateY(-1px); }
         
         /* Updated Canvas Style */
         #sig-canvas { border: 2px dashed #cbd5e1; border-radius: 8px; background: #fff; cursor: crosshair; touch-action: none; width: 100%; max-width: 500px; }
@@ -53,10 +89,11 @@
 
         /* Mobile Responsive */
         @media screen and (max-width: 768px) {
-            nav { width: 60px; }
+            nav { width: 70px; }
             .nav-brand h3, .nav-item span { display: none; }
+            .nav-logo { width: 40px; margin-bottom: 5px; } /* Smaller logo on mobile */
             .nav-item { padding: 15px; justify-content: center; }
-            main { margin-left: 60px; padding: 15px; }
+            main { margin-left: 70px; padding: 15px; }
             .app-card { padding: 15px; }
             input[type="date"] { width: 100%; }
         }
@@ -68,7 +105,8 @@
 
 <nav class="no-print">
     <div class="nav-brand">
-        <i class="fas fa-hospital-alt" style="font-size: 1.8rem; color: var(--secondary);"></i>
+        <img src="images/tdmh-logo.png" alt="TDMH Logo" class="nav-logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+        <i class="fas fa-hospital-alt" style="font-size: 2rem; display:none; margin-bottom:10px;"></i>
         <h3>TDMH E-CART</h3>
     </div>
     <ul class="nav-links">
@@ -122,12 +160,10 @@
     <section id="history-view" class="view-section">
         <div class="app-card">
             <h2>Verification History</h2>
-            
             <div class="no-print" style="position:relative; margin-bottom: 15px;">
                 <i class="fas fa-search" style="position:absolute; left:15px; top:13px; color:#94a3b8;"></i>
                 <input type="text" class="search-bar" id="historySearch" placeholder="Search by Date (e.g. 12/22) or Shift..." onkeyup="filterHistory()">
             </div>
-
             <div style="overflow-x: auto;">
                 <table id="historyTable">
                     <thead><tr><th>Time</th><th>Nurse</th><th>Shift</th><th>Status</th></tr></thead>
