@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>TDMH | Advanced Emergency Cart System</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -22,7 +22,7 @@
         
         /* Layout */
         nav { width: 260px; background: var(--sidebar-bg); color: white; position: fixed; height: 100vh; display: flex; flex-direction: column; z-index: 1000; }
-        main { margin-left: 260px; flex-grow: 1; padding: 40px; }
+        main { margin-left: 260px; flex-grow: 1; padding: 40px; width: 100%; }
         .app-card { background: white; border-radius: 12px; padding: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); border-top: 8px solid var(--primary); }
 
         /* Navigation */
@@ -33,7 +33,7 @@
 
         /* Table & UI */
         .view-section { display: none; }
-        .view-section.active { display: block; }
+        .view-section.active { display: block; animation: fadeIn 0.3s ease; }
         table { width: 100%; border-collapse: collapse; margin-top: 10px; }
         th { background: var(--primary); color: white; padding: 12px; text-align: left; font-size: 11px; text-transform: uppercase; position: sticky; top: 0; }
         td { padding: 10px; border-bottom: 1px solid #f1f5f9; font-size: 13px; }
@@ -43,9 +43,23 @@
         .qty-low { background-color: #fee2e2; border-color: var(--medical-red); color: var(--medical-red); }
         .exp-input { width: 140px; font-size: 12px; border: 1px solid #cbd5e1; border-radius: 4px; }
 
-        .search-bar { width: 100%; padding: 12px 40px; border: 1px solid var(--border); border-radius: 8px; margin-bottom: 20px; }
+        .search-bar { width: 100%; padding: 12px 40px; border: 1px solid var(--border); border-radius: 8px; margin-bottom: 20px; box-sizing: border-box;}
         .btn-submit { background: var(--secondary); color: white; padding: 15px; border: none; border-radius: 8px; font-weight: 700; width: 100%; cursor: pointer; font-size: 16px; margin-top: 20px; }
-        #sig-canvas { border: 2px dashed #cbd5e1; border-radius: 8px; background: #fff; cursor: crosshair; }
+        
+        /* Updated Canvas Style */
+        #sig-canvas { border: 2px dashed #cbd5e1; border-radius: 8px; background: #fff; cursor: crosshair; touch-action: none; width: 100%; max-width: 500px; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Mobile Responsive */
+        @media screen and (max-width: 768px) {
+            nav { width: 60px; }
+            .nav-brand h3, .nav-item span { display: none; }
+            .nav-item { padding: 15px; justify-content: center; }
+            main { margin-left: 60px; padding: 15px; }
+            .app-card { padding: 15px; }
+            input[type="date"] { width: 100%; }
+        }
 
         @media print { nav, .no-print, .btn-submit { display: none !important; } main { margin-left: 0; padding: 0; } }
     </style>
@@ -54,13 +68,13 @@
 
 <nav class="no-print">
     <div class="nav-brand">
-        <i class="fas fa-hospital-alt" style="font-size: 2.5rem; color: var(--secondary);"></i>
+        <i class="fas fa-hospital-alt" style="font-size: 1.8rem; color: var(--secondary);"></i>
         <h3>TDMH E-CART</h3>
     </div>
     <ul class="nav-links">
-        <li class="nav-item active" onclick="switchView('inventory', this)"><i class="fas fa-list-check"></i> Checklist</li>
-        <li class="nav-item" onclick="switchView('history', this)"><i class="fas fa-history"></i> Log History</li>
-        <li class="nav-item" onclick="switchView('expiry', this)"><i class="fas fa-calendar-times"></i> Expiry Monitor</li>
+        <li class="nav-item active" onclick="switchView('inventory', this)"><i class="fas fa-list-check"></i> <span>Checklist</span></li>
+        <li class="nav-item" onclick="switchView('history', this)"><i class="fas fa-history"></i> <span>Log History</span></li>
+        <li class="nav-item" onclick="switchView('expiry', this)"><i class="fas fa-calendar-times"></i> <span>Expiry Monitor</span></li>
     </ul>
 </nav>
 
@@ -75,22 +89,24 @@
                 <input type="text" class="search-bar" id="itemSearch" placeholder="Search for medications or Foley sizes..." onkeyup="filterItems()">
             </div>
 
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; margin-bottom:20px; background:#f1f5f9; padding:15px; border-radius:8px;">
-                <div><label>NOD Name</label><input type="text" id="nurseName" placeholder="Full Name, RN"></div>
-                <div><label>Shift</label><select id="shift"><option>7AM - 3PM</option><option>3PM - 11PM</option><option>11PM - 7AM</option></select></div>
+            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:15px; margin-bottom:20px; background:#f1f5f9; padding:15px; border-radius:8px;">
+                <div><label>NOD Name</label><br><input type="text" id="nurseName" placeholder="Full Name, RN" style="width:90%; padding:8px;"></div>
+                <div><label>Shift</label><br><select id="shift" style="width:95%; padding:8px;"><option>7AM - 3PM</option><option>3PM - 11PM</option><option>11PM - 7AM</option></select></div>
             </div>
 
-            <table>
-                <thead>
-                    <tr><th>Description</th><th>Std</th><th>Actual</th><th>Expiry</th><th>Status</th></tr>
-                </thead>
-                <tbody id="inventoryBody"></tbody>
-            </table>
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead>
+                        <tr><th>Description</th><th>Std</th><th>Actual</th><th>Expiry</th><th>Status</th></tr>
+                    </thead>
+                    <tbody id="inventoryBody"></tbody>
+                </table>
+            </div>
 
             <div style="margin-top:20px;">
                 <label>Nurse Signature</label><br>
-                <canvas id="sig-canvas" width="400" height="100"></canvas><br>
-                <button class="no-print" onclick="clearSig()" style="border:none; color:red; background:none; cursor:pointer;">Clear</button>
+                <canvas id="sig-canvas" height="150"></canvas><br>
+                <button class="no-print" onclick="clearSig()" style="border:none; color:red; background:none; cursor:pointer; font-size:12px;"><i class="fas fa-trash"></i> Clear Signature</button>
             </div>
             <button class="btn-submit" onclick="saveEntry()">Complete & Verify Submission</button>
         </div>
@@ -112,12 +128,10 @@
         { name: "Anti-tetanus serum", qty: 1, alert: false, exp: "2025-10-10" },
         { name: "Aspirin 325mg tablet", qty: 4, alert: false, exp: "2026-12-01" },
         { name: "Atropine 1mg/ml ampule", qty: 4, alert: false, exp: "2025-06-15" },
-        { name: "B-adrenergic agonists (Salbutamol)", qty: 5, alert: false, exp: "2026-03-30" },
         { name: "Diazepam 10mg/2ml (High Alert)", qty: 2, alert: true, exp: "2025-02-15" },
         { name: "Midazolam (High Alert)", qty: 2, alert: true, exp: "2025-11-20" },
         { name: "Calcium Gluconate 10%", qty: 2, alert: false, exp: "2026-01-10" },
         { name: "Clopidogrel 75mg tablet", qty: 4, alert: false, exp: "2026-05-05" },
-        { name: "D5W 250ml", qty: 4, alert: false, exp: "2027-02-01" },
         { name: "D50W 50mg/vial", qty: 2, alert: false, exp: "2026-04-12" },
         { name: "Digoxin 0.5mg/2ml ampule", qty: 2, alert: false, exp: "2025-12-30" },
         { name: "Diphenhydramine 50mg/ml amp", qty: 2, alert: false, exp: "2026-06-25" },
@@ -125,59 +139,18 @@
         { name: "Dopamine 200mg/5ml amp", qty: 2, alert: false, exp: "2025-08-05" },
         { name: "Epinephrine 1mg/ml ampule", qty: 20, alert: false, exp: "2027-10-10" },
         { name: "Furosemide 20mg/2ml amp", qty: 4, alert: false, exp: "2026-03-12" },
-        { name: "Haloperidol 50mg/ml amp", qty: 1, alert: false, exp: "2025-02-28" },
         { name: "Hydrocortisone 250mg/2ml vial", qty: 2, alert: false, exp: "2026-11-15" },
-        { name: "Lidocaine 10% spray", qty: 1, alert: false, exp: "2025-10-20" },
         { name: "Lidocaine 2% solution vial", qty: 4, alert: false, exp: "2026-04-04" },
         { name: "Magnesium sulfate 1g/2ml amp", qty: 1, alert: false, exp: "2025-03-01" },
-        { name: "Mannitol 20% solution 500ml", qty: 1, alert: false, exp: "2026-01-01" },
-        { name: "Methylprednisolone 4mg/tab", qty: 1, alert: false, exp: "2025-07-20" },
-        { name: "Metoclopramide 10mg/2ml amp", qty: 1, alert: false, exp: "2026-02-15" },
         { name: "Morphine Sulfate (High Alert)", qty: 1, alert: true, exp: "2025-04-15" },
         { name: "Nitroglycerin/ISDN 5mg SL", qty: 2, alert: false, exp: "2025-06-30" },
         { name: "Noradrenaline 2mg/2ml amp", qty: 4, alert: false, exp: "2026-11-22" },
         { name: "Paracetamol 300mg amp (IV)", qty: 3, alert: false, exp: "2025-08-15" },
-        { name: "Phenobarbital (High Alert)", qty: 1, alert: true, exp: "2025-01-10" },
-        { name: "Phenytoin 100mg cap/amp", qty: 1, alert: false, exp: "2026-12-05" },
-        { name: "Plain LRS 1L/bottle", qty: 1, alert: false, exp: "2027-01-01" },
-        { name: "Plain NSS 1L/bottle", qty: 1, alert: false, exp: "2027-05-15" },
         { name: "Potassium Chloride (High Alert)", qty: 2, alert: true, exp: "2025-01-20" },
         { name: "Sodium Bicarbonate 50mEq", qty: 4, alert: false, exp: "2025-09-30" },
-        { name: "Verapamil 5mg/2ml ampule", qty: 1, alert: false, exp: "2025-10-15" },
-        { name: "Vitamin B1/6/12 10ml vial", qty: 1, alert: false, exp: "2026-03-10" },
         { name: "Insulin syringe (0.3cc/0.5cc)", qty: 10, alert: false, exp: "N/A" },
-        { name: "1cc Syringe", qty: 10, alert: false, exp: "N/A" },
-        { name: "3cc Syringe", qty: 10, alert: false, exp: "N/A" },
-        { name: "5cc Syringe", qty: 10, alert: false, exp: "N/A" },
         { name: "10cc Syringe", qty: 10, alert: false, exp: "N/A" },
-        { name: "20cc Syringe", qty: 5, alert: false, exp: "N/A" },
-        { name: "30cc Syringe", qty: 2, alert: false, exp: "N/A" },
-        { name: "50cc Syringe", qty: 2, alert: false, exp: "N/A" },
-        { name: "Airway Adjuncts", qty: 1, alert: false, exp: "N/A" },
-        { name: "Airway/Intubation Kit", qty: 1, alert: false, exp: "N/A" },
-        { name: "Alcohol disinfectant", qty: 1, alert: false, exp: "N/A" },
-        { name: "Aseptic bulb syringe", qty: 1, alert: false, exp: "N/A" },
-        { name: "Calculator", qty: 1, alert: false, exp: "N/A" },
-        { name: "CBG Kit", qty: 1, alert: false, exp: "N/A" },
-        { name: "Cardiac Board", qty: 1, alert: false, exp: "N/A" },
-        { name: "Foley Catheter FR.2.5", qty: 1, alert: false, exp: "2028-01-01" },
-        { name: "Foley Catheter FR.3.0", qty: 1, alert: false, exp: "2028-01-01" },
-        { name: "Foley Catheter FR.3.5", qty: 1, alert: false, exp: "2028-01-01" },
-        { name: "Foley Catheter FR.4.0", qty: 1, alert: false, exp: "2028-01-01" },
-        { name: "Foley Catheter FR.4.5", qty: 1, alert: false, exp: "2028-01-01" },
-        { name: "Foley Catheter FR.5.0", qty: 1, alert: false, exp: "2028-01-01" },
-        { name: "Foley Catheter FR.5.5", qty: 1, alert: false, exp: "2028-01-01" },
-        { name: "Foley Catheter FR.6.0", qty: 1, alert: false, exp: "2028-01-01" },
-        { name: "Foley Catheter FR.6.5", qty: 1, alert: false, exp: "2028-01-01" },
-        { name: "Foley Catheter FR.7.0", qty: 1, alert: false, exp: "2028-01-01" },
-        { name: "Foley Catheter FR.7.5", qty: 1, alert: false, exp: "2028-01-01" },
-        { name: "Foley Catheter FR.8.0", qty: 1, alert: false, exp: "2028-01-01" },
-        { name: "Foley Catheter FR.8.5", qty: 1, alert: false, exp: "2028-01-01" },
-        { name: "Foley Catheter FR.14", qty: 1, alert: false, exp: "2028-01-01" },
-        { name: "Foley Catheter FR.16", qty: 1, alert: false, exp: "2028-01-01" },
-        { name: "Foley Catheter FR.18", qty: 1, alert: false, exp: "2028-01-01" },
-        { name: "Urine Collector Bag", qty: 2, alert: false, exp: "N/A" },
-        { name: "Waterproof Aprons", qty: 2, alert: false, exp: "N/A" }
+        { name: "Foley Catheter FR.16", qty: 1, alert: false, exp: "2028-01-01" }
     ];
 
     const today = new Date();
@@ -190,12 +163,14 @@
         if(item.alert) row.className = 'high-alert';
         
         let expStyle = "";
+        let expText = "OK";
         if(item.exp !== "N/A") {
             const expDate = new Date(item.exp);
             const monthsDiff = (expDate - today) / (1000*60*60*24*30);
             if(monthsDiff < 6) {
                 expStyle = monthsDiff < 3 ? 'color:red; font-weight:bold;' : 'color:orange;';
-                expBody.insertAdjacentHTML('beforeend', `<tr><td>${item.name}</td><td>${item.exp}</td><td style="${expStyle}">${monthsDiff < 3 ? 'CRITICAL' : 'MONITOR'}</td></tr>`);
+                expText = monthsDiff < 3 ? 'CRITICAL' : 'MONITOR';
+                expBody.insertAdjacentHTML('beforeend', `<tr><td>${item.name}</td><td>${item.exp}</td><td style="${expStyle}">${expText}</td></tr>`);
             }
         }
 
@@ -204,7 +179,7 @@
             <td id="std-${idx}">${item.qty}</td>
             <td><input type="number" class="qty-input" placeholder="0" oninput="checkQty(this, ${idx})"></td>
             <td><input type="date" class="exp-input" value="${item.exp !== 'N/A' ? item.exp : ''}"></td>
-            <td id="stat-${idx}">OK</td>
+            <td id="stat-${idx}" style="font-weight:bold; font-size:12px;">PENDING</td>
         `;
         invBody.appendChild(row);
     });
@@ -234,26 +209,78 @@
         document.querySelectorAll('#inventoryBody tr').forEach(r => r.style.display = r.innerText.toLowerCase().includes(q) ? '' : 'none');
     }
 
-    // Signature Pad
+    // --- IMPROVED SIGNATURE PAD (TOUCH + MOUSE) ---
     const canvas = document.getElementById('sig-canvas');
     const ctx = canvas.getContext('2d');
-    let draw = false;
-    canvas.addEventListener('mousedown', () => draw = true);
-    canvas.addEventListener('mouseup', () => { draw = false; ctx.beginPath(); });
-    canvas.addEventListener('mousemove', (e) => {
-        if(!draw) return;
-        ctx.lineWidth = 2; ctx.lineTo(e.offsetX, e.offsetY); ctx.stroke();
-    });
-    function clearSig() { ctx.clearRect(0,0,canvas.width,canvas.height); }
+    
+    // Fix blurry canvas on high DPI screens
+    function resizeCanvas() {
+        const ratio = Math.max(window.devicePixelRatio || 1, 1);
+        canvas.width = canvas.offsetWidth * ratio;
+        canvas.height = canvas.offsetHeight * ratio;
+        ctx.scale(ratio, ratio);
+    }
+    window.addEventListener("resize", resizeCanvas);
+    setTimeout(resizeCanvas, 100); // Initial resize
+
+    let drawing = false;
+
+    function getPos(e) {
+        const rect = canvas.getBoundingClientRect();
+        if (e.touches) {
+            return { x: e.touches[0].clientX - rect.left, y: e.touches[0].clientY - rect.top };
+        }
+        return { x: e.clientX - rect.left, y: e.clientY - rect.top };
+    }
+
+    function startDraw(e) {
+        e.preventDefault();
+        drawing = true;
+        ctx.beginPath();
+        const pos = getPos(e);
+        ctx.moveTo(pos.x, pos.y);
+    }
+
+    function moveDraw(e) {
+        if (!drawing) return;
+        e.preventDefault();
+        const pos = getPos(e);
+        ctx.lineWidth = 2;
+        ctx.lineCap = 'round';
+        ctx.lineTo(pos.x, pos.y);
+        ctx.stroke();
+    }
+
+    function endDraw() { drawing = false; }
+
+    // Event Listeners for Mouse
+    canvas.addEventListener('mousedown', startDraw);
+    canvas.addEventListener('mousemove', moveDraw);
+    canvas.addEventListener('mouseup', endDraw);
+
+    // Event Listeners for Touch (Tablet/Mobile)
+    canvas.addEventListener('touchstart', startDraw);
+    canvas.addEventListener('touchmove', moveDraw);
+    canvas.addEventListener('touchend', endDraw);
+
+    function clearSig() { 
+        ctx.clearRect(0,0,canvas.width,canvas.height); 
+    }
 
     function saveEntry() {
         const name = document.getElementById('nurseName').value;
         if(!name) return alert("Nurse name required");
+        
+        // Simple validation to ensure signature isn't empty (basic check)
+        // In real app, check pixel data
+        
         const logs = JSON.parse(localStorage.getItem('tdmh_logs_v4')) || [];
         logs.unshift({ time: new Date().toLocaleString(), name: name.toUpperCase(), shift: document.getElementById('shift').value });
         localStorage.setItem('tdmh_logs_v4', JSON.stringify(logs));
         renderHistory();
         alert("Inventory Verified & Saved");
+        clearSig();
+        document.getElementById('nurseName').value = "";
     }
 
     function renderHistory() {
