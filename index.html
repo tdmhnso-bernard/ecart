@@ -32,26 +32,22 @@
 
         .nav-brand { padding: 40px 20px 30px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1); }
         
-        /* UPDATED LOGO STYLE */
+        /* LOGO STYLE: Big & Visible */
         .nav-logo { 
-            width: 150px; /* Made bigger */
+            width: 180px; 
             height: auto; 
             margin-bottom: 15px; 
-            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
-            background: rgba(255, 255, 255, 0.15); /* Semi-transparent white background */
-            padding: 12px;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.4));
+            background: rgba(255, 255, 255, 0.95); /* Solid white background */
+            padding: 15px;
             border-radius: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 1);
         }
 
         .nav-links { list-style: none; padding: 20px 0; margin: 0; }
         .nav-item { padding: 15px 25px; display: flex; align-items: center; gap: 12px; cursor: pointer; color: #cbd5e1; transition: 0.3s; }
         .nav-item.active { color: white; background: rgba(255,255,255,0.1); border-left: 4px solid #38bdf8; backdrop-filter: blur(5px); }
         .nav-item:hover { color: white; background: rgba(255,255,255,0.05); }
-
-        /* Admin Button at Bottom */
-        .admin-btn { margin-top: auto; border-top: 1px solid rgba(255,255,255,0.1); padding: 20px; color: #94a3b8; font-size: 12px; cursor: pointer; text-align: center; }
-        .admin-btn:hover { color: white; }
 
         .view-section { display: none; }
         .view-section.active { display: block; animation: fadeIn 0.4s ease; }
@@ -70,23 +66,18 @@
         
         #sig-canvas { border: 2px dashed #cbd5e1; border-radius: 8px; background: #fff; cursor: crosshair; touch-action: none; width: 100%; max-width: 500px; }
         
-        /* Modal Style */
-        .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); }
-        .modal-content { background-color: white; margin: 15% auto; padding: 30px; border-radius: 12px; width: 300px; text-align: center; }
-        .modal input { width: 90%; padding: 10px; margin: 10px 0; border: 1px solid #ddd; border-radius: 4px; }
-
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         @media screen and (max-width: 768px) {
             nav { width: 70px; }
-            .nav-brand h3, .nav-item span, .admin-btn span { display: none; }
-            .nav-logo { width: 45px; margin-bottom: 5px; padding: 5px; } /* Smaller on mobile */
+            .nav-brand h3, .nav-item span { display: none; }
+            .nav-logo { width: 45px; margin-bottom: 5px; padding: 5px; } 
             .nav-item { padding: 15px; justify-content: center; }
             main { margin-left: 70px; padding: 15px; }
             .app-card { padding: 15px; }
             input[type="date"] { width: 100%; }
         }
-        @media print { nav, .no-print, .btn-submit, .admin-btn { display: none !important; } main { margin-left: 0; padding: 0; } }
+        @media print { nav, .no-print, .btn-submit { display: none !important; } main { margin-left: 0; padding: 0; } }
     </style>
 </head>
 <body>
@@ -102,10 +93,6 @@
         <li class="nav-item" onclick="switchView('history', this)"><i class="fas fa-history"></i> <span>Log History</span></li>
         <li class="nav-item" onclick="switchView('expiry', this)"><i class="fas fa-calendar-times"></i> <span>Expiry Monitor</span></li>
     </ul>
-    
-    <div class="admin-btn" onclick="openAdminModal()">
-        <i class="fas fa-cog"></i> <span>Admin Reset</span>
-    </div>
 </nav>
 
 <main>
@@ -167,17 +154,6 @@
         <div class="app-card"><h2>Expiry Monitor</h2><table id="expiryTable"><thead><tr><th>Item</th><th>Date</th><th>Alert</th></tr></thead><tbody id="expiryBody"></tbody></table></div>
     </section>
 </main>
-
-<div id="adminModal" class="modal">
-    <div class="modal-content">
-        <h3 style="color:var(--primary)">System Reset</h3>
-        <p style="font-size:12px; color:#64748b;">This will archive all test runs and clear the sheet.</p>
-        <input type="email" id="adminEmail" placeholder="Enter Admin Email">
-        <input type="password" id="adminPass" placeholder="Enter Password">
-        <button class="btn-submit" onclick="executeReset()" style="margin-top:10px; background:var(--medical-red);">Confirm Reset</button>
-        <button onclick="document.getElementById('adminModal').style.display='none'" style="margin-top:10px; background:none; border:none; cursor:pointer;">Cancel</button>
-    </div>
-</div>
 
 <script>
     const items = [
@@ -344,37 +320,6 @@
     canvas.addEventListener('touchstart', startDraw); canvas.addEventListener('touchmove', moveDraw); canvas.addEventListener('touchend', endDraw);
     function clearSig() { ctx.clearRect(0,0,canvas.width,canvas.height); }
 
-    // --- ADMIN RESET FUNCTIONS ---
-    function openAdminModal() { document.getElementById('adminModal').style.display = 'block'; }
-    
-    function executeReset() {
-        const email = document.getElementById('adminEmail').value;
-        const pass = document.getElementById('adminPass').value;
-        // YOUR INTEGRATED LINK IS HERE
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbzIygJDkcD6GcxbfbwGPNvbmNNRC7kvhuYb1ylkfUyIyskKuATreB-PVEteG5H_4Vo/exec';
-
-        if(email === "cqi.tdmh2025@gmail.com" && pass === "TDMHCQI/NSO2025") {
-            const btn = document.querySelector('#adminModal button');
-            btn.innerHTML = "Processing...";
-            btn.disabled = true;
-
-            fetch(scriptURL, {
-                method: 'POST',
-                mode: 'no-cors',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ action: 'reset', email: email, password: pass })
-            })
-            .then(() => {
-                alert("✅ System Reset Complete! Data archived to 'E-cart test runs Archive'.");
-                localStorage.removeItem('tdmh_logs_v4'); // Clear local history
-                renderHistory();
-                location.reload(); // Refresh page
-            })
-            .catch(err => alert("Error connecting to server."));
-        } else {
-            alert("❌ Invalid Credentials");
-        }
-    }
 
     // --- MAIN SAVE FUNCTION ---
     function saveEntry() {
@@ -389,7 +334,7 @@
             return { name: item.name, qty: item.qty, actual: actualVal };
         });
 
-        // YOUR INTEGRATED LINK IS HERE
+        // INTEGRATED URL HERE
         const scriptURL = 'https://script.google.com/macros/s/AKfycbzIygJDkcD6GcxbfbwGPNvbmNNRC7kvhuYb1ylkfUyIyskKuATreB-PVEteG5H_4Vo/exec';
 
         const payload = {
