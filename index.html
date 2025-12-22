@@ -91,7 +91,14 @@
 
             <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:15px; margin-bottom:20px; background:#f1f5f9; padding:15px; border-radius:8px;">
                 <div><label>NOD Name</label><br><input type="text" id="nurseName" placeholder="Full Name, RN" style="width:90%; padding:8px;"></div>
-                <div><label>Shift</label><br><select id="shift" style="width:95%; padding:8px;"><option>7AM - 3PM</option><option>3PM - 11PM</option><option>11PM - 7AM</option></select></div>
+                <div>
+                    <label>Shift</label><br>
+                    <select id="shift" style="width:95%; padding:8px;">
+                        <option>6AM - 2PM</option>
+                        <option>2PM - 10PM</option>
+                        <option>10PM - 6AM</option>
+                    </select>
+                </div>
             </div>
 
             <div style="overflow-x: auto;">
@@ -113,7 +120,21 @@
     </section>
 
     <section id="history-view" class="view-section">
-        <div class="app-card"><h2>Verification History</h2><table id="historyTable"><thead><tr><th>Time</th><th>Nurse</th><th>Shift</th><th>Status</th></tr></thead><tbody id="historyBody"></tbody></table></div>
+        <div class="app-card">
+            <h2>Verification History</h2>
+            
+            <div class="no-print" style="position:relative; margin-bottom: 15px;">
+                <i class="fas fa-search" style="position:absolute; left:15px; top:13px; color:#94a3b8;"></i>
+                <input type="text" class="search-bar" id="historySearch" placeholder="Search by Date (e.g. 12/22) or Shift..." onkeyup="filterHistory()">
+            </div>
+
+            <div style="overflow-x: auto;">
+                <table id="historyTable">
+                    <thead><tr><th>Time</th><th>Nurse</th><th>Shift</th><th>Status</th></tr></thead>
+                    <tbody id="historyBody"></tbody>
+                </table>
+            </div>
+        </div>
     </section>
 
     <section id="expiry-view" class="view-section">
@@ -209,11 +230,18 @@
         document.querySelectorAll('#inventoryBody tr').forEach(r => r.style.display = r.innerText.toLowerCase().includes(q) ? '' : 'none');
     }
 
+    function filterHistory() {
+        const q = document.getElementById('historySearch').value.toLowerCase();
+        document.querySelectorAll('#historyBody tr').forEach(r => {
+            // Checks if the row text (Date, Name, or Shift) matches what you typed
+            r.style.display = r.innerText.toLowerCase().includes(q) ? '' : 'none';
+        });
+    }
+
     // --- IMPROVED SIGNATURE PAD (TOUCH + MOUSE) ---
     const canvas = document.getElementById('sig-canvas');
     const ctx = canvas.getContext('2d');
     
-    // Fix blurry canvas on high DPI screens
     function resizeCanvas() {
         const ratio = Math.max(window.devicePixelRatio || 1, 1);
         canvas.width = canvas.offsetWidth * ratio;
@@ -221,7 +249,7 @@
         ctx.scale(ratio, ratio);
     }
     window.addEventListener("resize", resizeCanvas);
-    setTimeout(resizeCanvas, 100); // Initial resize
+    setTimeout(resizeCanvas, 100); 
 
     let drawing = false;
 
@@ -253,12 +281,9 @@
 
     function endDraw() { drawing = false; }
 
-    // Event Listeners for Mouse
     canvas.addEventListener('mousedown', startDraw);
     canvas.addEventListener('mousemove', moveDraw);
     canvas.addEventListener('mouseup', endDraw);
-
-    // Event Listeners for Touch (Tablet/Mobile)
     canvas.addEventListener('touchstart', startDraw);
     canvas.addEventListener('touchmove', moveDraw);
     canvas.addEventListener('touchend', endDraw);
@@ -270,9 +295,6 @@
     function saveEntry() {
         const name = document.getElementById('nurseName').value;
         if(!name) return alert("Nurse name required");
-        
-        // Simple validation to ensure signature isn't empty (basic check)
-        // In real app, check pixel data
         
         const logs = JSON.parse(localStorage.getItem('tdmh_logs_v4')) || [];
         logs.unshift({ time: new Date().toLocaleString(), name: name.toUpperCase(), shift: document.getElementById('shift').value });
