@@ -12,7 +12,7 @@
             --primary: #0c4a6e;
             --secondary: #0284c7;
             --medical-red: #be123c;
-            --sidebar-bg: #0f172a; /* Fallback color */
+            --sidebar-bg: #0f172a;
             --bg-light: #f8fafc;
             --border: #e2e8f0;
             --high-alert-bg: #fff1f2;
@@ -20,53 +20,39 @@
 
         body { font-family: 'Inter', sans-serif; background-color: var(--bg-light); margin: 0; display: flex; min-height: 100vh; }
         
-        /* Layout & Sidebar Design Update */
         nav { 
             width: 260px; 
-            /* This creates the dark blue overlay ON TOP of your background image */
             background: linear-gradient(to bottom, rgba(15, 23, 42, 0.92), rgba(12, 74, 110, 0.85)), url('images/tdmh-background.jpg');
-            background-size: cover;
-            background-position: center;
-            color: white; 
-            position: fixed; 
-            height: 100vh; 
-            display: flex; 
-            flex-direction: column; 
-            z-index: 1000; 
-            box-shadow: 4px 0 20px rgba(0,0,0,0.2);
+            background-size: cover; background-position: center; color: white; position: fixed; height: 100vh; 
+            display: flex; flex-direction: column; z-index: 1000; box-shadow: 4px 0 20px rgba(0,0,0,0.2);
         }
 
         main { margin-left: 260px; flex-grow: 1; padding: 40px; width: 100%; }
         .app-card { background: white; border-radius: 12px; padding: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); border-top: 8px solid var(--primary); }
 
-        /* Navigation */
-        .nav-brand { 
-            padding: 40px 20px 30px; 
-            text-align: center; 
-            border-bottom: 1px solid rgba(255,255,255,0.1); 
-        }
+        .nav-brand { padding: 40px 20px 30px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1); }
         
-        /* Logo Styling */
-        .nav-logo {
-            width: 100px; /* Adjust size as needed */
-            height: auto;
-            margin-bottom: 15px;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+        /* UPDATED LOGO STYLE */
+        .nav-logo { 
+            width: 150px; /* Made bigger */
+            height: auto; 
+            margin-bottom: 15px; 
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
+            background: rgba(255, 255, 255, 0.15); /* Semi-transparent white background */
+            padding: 12px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         .nav-links { list-style: none; padding: 20px 0; margin: 0; }
         .nav-item { padding: 15px 25px; display: flex; align-items: center; gap: 12px; cursor: pointer; color: #cbd5e1; transition: 0.3s; }
-        
-        /* Active State with Glow */
-        .nav-item.active { 
-            color: white; 
-            background: rgba(255,255,255,0.1); 
-            border-left: 4px solid #38bdf8;
-            backdrop-filter: blur(5px);
-        }
+        .nav-item.active { color: white; background: rgba(255,255,255,0.1); border-left: 4px solid #38bdf8; backdrop-filter: blur(5px); }
         .nav-item:hover { color: white; background: rgba(255,255,255,0.05); }
 
-        /* Table & UI */
+        /* Admin Button at Bottom */
+        .admin-btn { margin-top: auto; border-top: 1px solid rgba(255,255,255,0.1); padding: 20px; color: #94a3b8; font-size: 12px; cursor: pointer; text-align: center; }
+        .admin-btn:hover { color: white; }
+
         .view-section { display: none; }
         .view-section.active { display: block; animation: fadeIn 0.4s ease; }
         table { width: 100%; border-collapse: collapse; margin-top: 10px; }
@@ -82,23 +68,25 @@
         .btn-submit { background: var(--secondary); color: white; padding: 15px; border: none; border-radius: 8px; font-weight: 700; width: 100%; cursor: pointer; font-size: 16px; margin-top: 20px; transition: 0.2s; }
         .btn-submit:hover { background: var(--primary); transform: translateY(-1px); }
         
-        /* Updated Canvas Style */
         #sig-canvas { border: 2px dashed #cbd5e1; border-radius: 8px; background: #fff; cursor: crosshair; touch-action: none; width: 100%; max-width: 500px; }
+        
+        /* Modal Style */
+        .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); }
+        .modal-content { background-color: white; margin: 15% auto; padding: 30px; border-radius: 12px; width: 300px; text-align: center; }
+        .modal input { width: 90%; padding: 10px; margin: 10px 0; border: 1px solid #ddd; border-radius: 4px; }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Mobile Responsive */
         @media screen and (max-width: 768px) {
             nav { width: 70px; }
-            .nav-brand h3, .nav-item span { display: none; }
-            .nav-logo { width: 40px; margin-bottom: 5px; } /* Smaller logo on mobile */
+            .nav-brand h3, .nav-item span, .admin-btn span { display: none; }
+            .nav-logo { width: 45px; margin-bottom: 5px; padding: 5px; } /* Smaller on mobile */
             .nav-item { padding: 15px; justify-content: center; }
             main { margin-left: 70px; padding: 15px; }
             .app-card { padding: 15px; }
             input[type="date"] { width: 100%; }
         }
-
-        @media print { nav, .no-print, .btn-submit { display: none !important; } main { margin-left: 0; padding: 0; } }
+        @media print { nav, .no-print, .btn-submit, .admin-btn { display: none !important; } main { margin-left: 0; padding: 0; } }
     </style>
 </head>
 <body>
@@ -114,6 +102,10 @@
         <li class="nav-item" onclick="switchView('history', this)"><i class="fas fa-history"></i> <span>Log History</span></li>
         <li class="nav-item" onclick="switchView('expiry', this)"><i class="fas fa-calendar-times"></i> <span>Expiry Monitor</span></li>
     </ul>
+    
+    <div class="admin-btn" onclick="openAdminModal()">
+        <i class="fas fa-cog"></i> <span>Admin Reset</span>
+    </div>
 </nav>
 
 <main>
@@ -124,7 +116,7 @@
 
             <div class="no-print" style="position:relative;">
                 <i class="fas fa-search" style="position:absolute; left:15px; top:13px; color:#94a3b8;"></i>
-                <input type="text" class="search-bar" id="itemSearch" placeholder="Search for medications or Foley sizes..." onkeyup="filterItems()">
+                <input type="text" class="search-bar" id="itemSearch" placeholder="Search for medications..." onkeyup="filterItems()">
             </div>
 
             <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:15px; margin-bottom:20px; background:#f1f5f9; padding:15px; border-radius:8px;">
@@ -141,9 +133,7 @@
 
             <div style="overflow-x: auto;">
                 <table>
-                    <thead>
-                        <tr><th>Description</th><th>Std</th><th>Actual</th><th>Expiry</th><th>Status</th></tr>
-                    </thead>
+                    <thead><tr><th>Description</th><th>Std</th><th>Actual</th><th>Expiry</th><th>Status</th></tr></thead>
                     <tbody id="inventoryBody"></tbody>
                 </table>
             </div>
@@ -162,7 +152,7 @@
             <h2>Verification History</h2>
             <div class="no-print" style="position:relative; margin-bottom: 15px;">
                 <i class="fas fa-search" style="position:absolute; left:15px; top:13px; color:#94a3b8;"></i>
-                <input type="text" class="search-bar" id="historySearch" placeholder="Search by Date (e.g. 12/22) or Shift..." onkeyup="filterHistory()">
+                <input type="text" class="search-bar" id="historySearch" placeholder="Search history..." onkeyup="filterHistory()">
             </div>
             <div style="overflow-x: auto;">
                 <table id="historyTable">
@@ -177,6 +167,17 @@
         <div class="app-card"><h2>Expiry Monitor</h2><table id="expiryTable"><thead><tr><th>Item</th><th>Date</th><th>Alert</th></tr></thead><tbody id="expiryBody"></tbody></table></div>
     </section>
 </main>
+
+<div id="adminModal" class="modal">
+    <div class="modal-content">
+        <h3 style="color:var(--primary)">System Reset</h3>
+        <p style="font-size:12px; color:#64748b;">This will archive all test runs and clear the sheet.</p>
+        <input type="email" id="adminEmail" placeholder="Enter Admin Email">
+        <input type="password" id="adminPass" placeholder="Enter Password">
+        <button class="btn-submit" onclick="executeReset()" style="margin-top:10px; background:var(--medical-red);">Confirm Reset</button>
+        <button onclick="document.getElementById('adminModal').style.display='none'" style="margin-top:10px; background:none; border:none; cursor:pointer;">Cancel</button>
+    </div>
+</div>
 
 <script>
     const items = [
@@ -316,7 +317,7 @@
         });
     }
 
-    // --- IMPROVED SIGNATURE PAD (TOUCH + MOUSE) ---
+    // --- SIGNATURE PAD ---
     const canvas = document.getElementById('sig-canvas');
     const ctx = canvas.getContext('2d');
     
@@ -330,57 +331,97 @@
     setTimeout(resizeCanvas, 100); 
 
     let drawing = false;
-
     function getPos(e) {
         const rect = canvas.getBoundingClientRect();
-        if (e.touches) {
-            return { x: e.touches[0].clientX - rect.left, y: e.touches[0].clientY - rect.top };
-        }
+        if (e.touches) return { x: e.touches[0].clientX - rect.left, y: e.touches[0].clientY - rect.top };
         return { x: e.clientX - rect.left, y: e.clientY - rect.top };
     }
-
-    function startDraw(e) {
-        e.preventDefault();
-        drawing = true;
-        ctx.beginPath();
-        const pos = getPos(e);
-        ctx.moveTo(pos.x, pos.y);
-    }
-
-    function moveDraw(e) {
-        if (!drawing) return;
-        e.preventDefault();
-        const pos = getPos(e);
-        ctx.lineWidth = 2;
-        ctx.lineCap = 'round';
-        ctx.lineTo(pos.x, pos.y);
-        ctx.stroke();
-    }
-
+    function startDraw(e) { e.preventDefault(); drawing = true; ctx.beginPath(); const pos = getPos(e); ctx.moveTo(pos.x, pos.y); }
+    function moveDraw(e) { if (!drawing) return; e.preventDefault(); const pos = getPos(e); ctx.lineWidth = 2; ctx.lineCap = 'round'; ctx.lineTo(pos.x, pos.y); ctx.stroke(); }
     function endDraw() { drawing = false; }
 
-    canvas.addEventListener('mousedown', startDraw);
-    canvas.addEventListener('mousemove', moveDraw);
-    canvas.addEventListener('mouseup', endDraw);
-    canvas.addEventListener('touchstart', startDraw);
-    canvas.addEventListener('touchmove', moveDraw);
-    canvas.addEventListener('touchend', endDraw);
+    canvas.addEventListener('mousedown', startDraw); canvas.addEventListener('mousemove', moveDraw); canvas.addEventListener('mouseup', endDraw);
+    canvas.addEventListener('touchstart', startDraw); canvas.addEventListener('touchmove', moveDraw); canvas.addEventListener('touchend', endDraw);
+    function clearSig() { ctx.clearRect(0,0,canvas.width,canvas.height); }
 
-    function clearSig() { 
-        ctx.clearRect(0,0,canvas.width,canvas.height); 
+    // --- ADMIN RESET FUNCTIONS ---
+    function openAdminModal() { document.getElementById('adminModal').style.display = 'block'; }
+    
+    function executeReset() {
+        const email = document.getElementById('adminEmail').value;
+        const pass = document.getElementById('adminPass').value;
+        // YOUR INTEGRATED LINK IS HERE
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbzIygJDkcD6GcxbfbwGPNvbmNNRC7kvhuYb1ylkfUyIyskKuATreB-PVEteG5H_4Vo/exec';
+
+        if(email === "cqi.tdmh2025@gmail.com" && pass === "TDMHCQI/NSO2025") {
+            const btn = document.querySelector('#adminModal button');
+            btn.innerHTML = "Processing...";
+            btn.disabled = true;
+
+            fetch(scriptURL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'reset', email: email, password: pass })
+            })
+            .then(() => {
+                alert("✅ System Reset Complete! Data archived to 'E-cart test runs Archive'.");
+                localStorage.removeItem('tdmh_logs_v4'); // Clear local history
+                renderHistory();
+                location.reload(); // Refresh page
+            })
+            .catch(err => alert("Error connecting to server."));
+        } else {
+            alert("❌ Invalid Credentials");
+        }
     }
 
+    // --- MAIN SAVE FUNCTION ---
     function saveEntry() {
         const name = document.getElementById('nurseName').value;
         if(!name) return alert("Nurse name required");
-        
-        const logs = JSON.parse(localStorage.getItem('tdmh_logs_v4')) || [];
-        logs.unshift({ time: new Date().toLocaleString(), name: name.toUpperCase(), shift: document.getElementById('shift').value });
-        localStorage.setItem('tdmh_logs_v4', JSON.stringify(logs));
-        renderHistory();
-        alert("Inventory Verified & Saved");
-        clearSig();
-        document.getElementById('nurseName').value = "";
+        const submitBtn = document.querySelector('.btn-submit');
+        submitBtn.innerHTML = "Submitting..."; submitBtn.disabled = true;
+
+        const capturedItems = items.map((item, index) => {
+            const inputs = document.querySelectorAll('.qty-input');
+            const actualVal = inputs[index].value || 0; 
+            return { name: item.name, qty: item.qty, actual: actualVal };
+        });
+
+        // YOUR INTEGRATED LINK IS HERE
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbzIygJDkcD6GcxbfbwGPNvbmNNRC7kvhuYb1ylkfUyIyskKuATreB-PVEteG5H_4Vo/exec';
+
+        const payload = {
+            timestamp: new Date().toLocaleString(),
+            nurseName: name.toUpperCase(),
+            shift: document.getElementById('shift').value,
+            items: capturedItems,
+            signature: canvas.toDataURL()
+        };
+
+        fetch(scriptURL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        })
+        .then(() => {
+            alert("✅ Successfully Saved to Database!");
+            const logs = JSON.parse(localStorage.getItem('tdmh_logs_v4')) || [];
+            logs.unshift({ time: new Date().toLocaleString(), name: name.toUpperCase(), shift: payload.shift });
+            localStorage.setItem('tdmh_logs_v4', JSON.stringify(logs));
+            renderHistory();
+            clearSig();
+            document.getElementById('nurseName').value = "";
+            document.querySelectorAll('.qty-input').forEach(i => { i.value = ""; i.classList.remove('qty-low'); });
+            document.querySelectorAll('[id^="stat-"]').forEach(s => s.innerHTML = "PENDING");
+            submitBtn.innerHTML = "Complete & Verify Submission"; submitBtn.disabled = false;
+        })
+        .catch(error => {
+            alert("Error saving to database. Check internet connection.");
+            submitBtn.innerHTML = "Complete & Verify Submission"; submitBtn.disabled = false;
+        });
     }
 
     function renderHistory() {
