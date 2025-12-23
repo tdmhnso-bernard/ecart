@@ -30,7 +30,7 @@
         main { margin-left: 260px; flex-grow: 1; padding: 40px; width: 100%; }
         .app-card { background: white; border-radius: 12px; padding: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); border-top: 8px solid var(--primary); }
 
-        /* FIXED: Added Flexbox to perfectly center the logo and text */
+        /* Centering the Logo */
         .nav-brand { 
             padding: 40px 20px 30px; 
             text-align: center; 
@@ -40,19 +40,21 @@
             align-items: center;
         }
         
-        /* LOGO STYLE: Centered & Solid White Glass */
+        /* LOGO FIXED: Bigger + Lower Opacity (Glass Effect) */
         .nav-logo { 
-            width: 220px; 
+            width: 260px; /* INCREASED SIZE */
             height: auto; 
             margin-bottom: 15px; 
             filter: drop-shadow(0 4px 8px rgba(0,0,0,0.4));
-            /* Increased opacity to 0.85 for a much more solid white look */
-            background: rgba(255, 255, 255, 0.85); 
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
+            
+            /* OPACITY FIXED: 0.3 is subtle glass, not solid white */
+            background: rgba(255, 255, 255, 0.3); 
+            
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
             padding: 15px;
             border-radius: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.4);
         }
 
         .nav-links { list-style: none; padding: 20px 0; margin: 0; width: 100%; }
@@ -75,7 +77,7 @@
         .btn-submit { background: var(--secondary); color: white; padding: 15px; border: none; border-radius: 8px; font-weight: 700; width: 100%; cursor: pointer; font-size: 16px; margin-top: 20px; transition: 0.2s; }
         .btn-submit:hover { background: var(--primary); transform: translateY(-1px); }
         
-        /* SIGNATURE CANVAS */
+        /* SIGNATURE CANVAS (Wide & Tall) */
         #sig-canvas { 
             border: 2px dashed #cbd5e1; 
             border-radius: 8px; 
