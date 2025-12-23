@@ -20,6 +20,7 @@
 
         body { font-family: 'Inter', sans-serif; background-color: var(--bg-light); margin: 0; display: flex; min-height: 100vh; }
         
+        /* --- DESKTOP SIDEBAR --- */
         nav { 
             width: 260px; 
             background: linear-gradient(to bottom, rgba(15, 23, 42, 0.92), rgba(12, 74, 110, 0.85)), url('images/tdmh-background.jpg');
@@ -27,34 +28,21 @@
             display: flex; flex-direction: column; z-index: 1000; box-shadow: 4px 0 20px rgba(0,0,0,0.2);
         }
 
-        main { margin-left: 260px; flex-grow: 1; padding: 40px; width: 100%; }
+        .mobile-header { display: none; }
+
+        main { margin-left: 260px; flex-grow: 1; padding: 40px; width: 100%; transition: 0.3s; }
         .app-card { background: white; border-radius: 12px; padding: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); border-top: 8px solid var(--primary); }
 
-        /* Centering the Logo */
-        .nav-brand { 
-            padding: 40px 20px 30px; 
-            text-align: center; 
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
+        /* --- LOGO --- */
+        .nav-brand { padding: 40px 20px 30px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; flex-direction: column; align-items: center;}
         
-        /* LOGO FIXED: Bigger + Lower Opacity (Glass Effect) */
         .nav-logo { 
-            width: 260px; /* INCREASED SIZE */
-            height: auto; 
-            margin-bottom: 15px; 
+            width: 180px; height: auto; margin-bottom: 15px; 
             filter: drop-shadow(0 4px 8px rgba(0,0,0,0.4));
-            
-            /* OPACITY FIXED: 0.3 is subtle glass, not solid white */
-            background: rgba(255, 255, 255, 0.3); 
-            
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            padding: 15px;
-            border-radius: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.4);
+            background: rgba(255, 255, 255, 0.65); 
+            backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+            padding: 15px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.5);
+            cursor: pointer; /* Makes it clickable */
         }
 
         .nav-links { list-style: none; padding: 20px 0; margin: 0; width: 100%; }
@@ -62,6 +50,7 @@
         .nav-item.active { color: white; background: rgba(255,255,255,0.1); border-left: 4px solid #38bdf8; backdrop-filter: blur(5px); }
         .nav-item:hover { color: white; background: rgba(255,255,255,0.05); }
 
+        /* UI ELEMENTS */
         .view-section { display: none; }
         .view-section.active { display: block; animation: fadeIn 0.4s ease; }
         table { width: 100%; border-collapse: collapse; margin-top: 10px; }
@@ -77,37 +66,42 @@
         .btn-submit { background: var(--secondary); color: white; padding: 15px; border: none; border-radius: 8px; font-weight: 700; width: 100%; cursor: pointer; font-size: 16px; margin-top: 20px; transition: 0.2s; }
         .btn-submit:hover { background: var(--primary); transform: translateY(-1px); }
         
-        /* SIGNATURE CANVAS (Wide & Tall) */
-        #sig-canvas { 
-            border: 2px dashed #cbd5e1; 
-            border-radius: 8px; 
-            background: #fff; 
-            cursor: crosshair; 
-            touch-action: none; 
-            width: 100%; 
-            max-width: 600px; 
-        }
+        #sig-canvas { border: 2px dashed #cbd5e1; border-radius: 8px; background: #fff; cursor: crosshair; touch-action: none; width: 100%; max-width: 600px; }
         
+        /* LOADING STATE */
+        .loading-input { background-color: #e2e8f0; color: #94a3b8; cursor: wait; }
+
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         @media screen and (max-width: 768px) {
-            nav { width: 70px; }
-            .nav-brand { padding: 20px 10px; }
-            .nav-brand h3, .nav-item span { display: none; }
-            .nav-logo { width: 50px; margin-bottom: 5px; padding: 5px; } 
-            .nav-item { padding: 15px; justify-content: center; }
-            main { margin-left: 70px; padding: 15px; }
+            body { flex-direction: column; }
+            nav { width: 100%; height: 65px; bottom: 0; top: auto; position: fixed; flex-direction: row; padding: 0; background: #0f172a; border-top: 1px solid rgba(255,255,255,0.1); }
+            .nav-brand { display: none; }
+            .nav-links { display: flex; flex-direction: row; justify-content: space-around; align-items: center; height: 100%; }
+            .nav-item { flex-direction: column; padding: 5px; font-size: 10px; gap: 4px; border-left: none; width: 100%; justify-content: center; }
+            .nav-item i { font-size: 18px; margin-bottom: 2px; }
+            .nav-item.active { border-left: none; border-top: 3px solid #38bdf8; background: rgba(255,255,255,0.05); }
+            
+            .mobile-header { display: flex; justify-content: center; align-items: center; padding: 15px; background: var(--sidebar-bg); background: linear-gradient(to right, rgba(15, 23, 42, 0.95), rgba(12, 74, 110, 0.9)), url('images/tdmh-background.jpg'); background-size: cover; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+            .mobile-logo { width: 140px; background: rgba(255, 255, 255, 0.65); padding: 8px; border-radius: 8px; backdrop-filter: blur(5px); cursor: pointer; }
+            
+            main { margin-left: 0; width: 100%; padding: 15px; padding-bottom: 80px; box-sizing: border-box; }
             .app-card { padding: 15px; }
-            input[type="date"] { width: 100%; }
+            .qty-input { width: 50px; }
+            input[type="date"] { width: 100%; min-width: 100px; }
         }
-        @media print { nav, .no-print, .btn-submit { display: none !important; } main { margin-left: 0; padding: 0; } }
+        @media print { nav, .mobile-header, .no-print, .btn-submit { display: none !important; } main { margin: 0; padding: 0; } }
     </style>
 </head>
 <body>
 
+<div class="mobile-header no-print">
+    <img src="images/tdmh-logo.png" alt="TDMH Logo" class="mobile-logo" onclick="handleSecretClick()">
+</div>
+
 <nav class="no-print">
     <div class="nav-brand">
-        <img src="images/tdmh-logo.png" alt="TDMH Logo" class="nav-logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+        <img src="images/tdmh-logo.png" alt="TDMH Logo" class="nav-logo" onclick="handleSecretClick()" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
         <i class="fas fa-hospital-alt" style="font-size: 2rem; display:none; margin-bottom:10px;"></i>
         <h3>TDMH E-CART</h3>
     </div>
@@ -130,6 +124,19 @@
             </div>
 
             <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:15px; margin-bottom:20px; background:#f1f5f9; padding:15px; border-radius:8px;">
+                <div>
+                    <label>Station / Ward</label><br>
+                    <select id="stationSelect" style="width:95%; padding:8px; border:1px solid #cbd5e1; border-radius:4px; font-weight:bold; color:var(--primary);">
+                        <option value="">-- Select Station --</option>
+                        <option>Station 3</option>
+                        <option>Station 4B</option>
+                        <option>Station 5A</option>
+                        <option>Station 5B</option>
+                        <option>ER</option>
+                        <option>OR</option>
+                        <option>NICU</option>
+                    </select>
+                </div>
                 <div><label>NOD Name</label><br><input type="text" id="nurseName" placeholder="Full Name, RN" style="width:90%; padding:8px;"></div>
                 <div>
                     <label>Shift</label><br>
@@ -166,7 +173,7 @@
             </div>
             <div style="overflow-x: auto;">
                 <table id="historyTable">
-                    <thead><tr><th>Time</th><th>Nurse</th><th>Shift</th><th>Status</th></tr></thead>
+                    <thead><tr><th>Time</th><th>Station</th><th>Nurse</th><th>Shift</th><th>Status</th></tr></thead>
                     <tbody id="historyBody"></tbody>
                 </table>
             </div>
@@ -316,9 +323,75 @@
         });
     }
 
+    // --- SECRET CLICK HANDLER ---
+    let clickCount = 0;
+    let clickTimer = null;
+
+    function handleSecretClick() {
+        clickCount++;
+        
+        if(clickCount === 1) {
+            clickTimer = setTimeout(() => { clickCount = 0; }, 800); // Reset if not clicked fast enough
+        }
+        
+        if(clickCount === 3) {
+            clearTimeout(clickTimer);
+            clickCount = 0;
+            triggerSecretFetch();
+        }
+    }
+
+    function triggerSecretFetch() {
+        const station = document.getElementById('stationSelect').value;
+        if(!station) {
+            alert("⚠️ Please select a Station first, then click the logo 3 times.");
+            return;
+        }
+
+        const pass = prompt("🔐 HEAD NURSE ACCESS\nEnter Admin Password to Auto-Fill Last Entry:");
+        
+        if(pass === "TDMHCQI/NSO2025") {
+            alert("✅ Access Granted. Fetching data for " + station + "...");
+            fetchLastData(station); // Call the fetch function
+        } else if (pass !== null) {
+            alert("❌ Access Denied.");
+        }
+    }
+
+    // --- AUTO-FETCH FUNCTION ---
+    function fetchLastData(station) {
+        // Visual Feedback
+        const inputs = document.querySelectorAll('.qty-input');
+        inputs.forEach(i => { i.disabled = true; i.classList.add('loading-input'); i.value = "..."; });
+
+        // PASTE NEW SCRIPT URL HERE
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbzIygJDkcD6GcxbfbwGPNvbmNNRC7kvhuYb1ylkfUyIyskKuATreB-PVEteG5H_4Vo/exec';
+
+        fetch(scriptURL + '?station=' + encodeURIComponent(station))
+        .then(response => response.json())
+        .then(res => {
+            inputs.forEach((input, index) => {
+                input.disabled = false;
+                input.classList.remove('loading-input');
+                if(res.status === 'success' && res.data[index] !== undefined) {
+                    input.value = res.data[index];
+                    checkQty(input, index);
+                } else {
+                    input.value = ""; // No data found
+                }
+            });
+        })
+        .catch(err => {
+            console.error(err);
+            inputs.forEach(i => { i.disabled = false; i.classList.remove('loading-input'); i.value = ""; });
+            alert("Connection Error. Could not fetch data.");
+        });
+    }
+
     // --- SIGNATURE PAD ---
     const canvas = document.getElementById('sig-canvas');
     const ctx = canvas.getContext('2d');
+    var hasSigned = false; // ANTI-TRIP FLAG
     
     function resizeCanvas() {
         const ratio = Math.max(window.devicePixelRatio || 1, 1);
@@ -335,19 +408,33 @@
         if (e.touches) return { x: e.touches[0].clientX - rect.left, y: e.touches[0].clientY - rect.top };
         return { x: e.clientX - rect.left, y: e.clientY - rect.top };
     }
-    function startDraw(e) { e.preventDefault(); drawing = true; ctx.beginPath(); const pos = getPos(e); ctx.moveTo(pos.x, pos.y); }
+    function startDraw(e) { e.preventDefault(); drawing = true; hasSigned = true; ctx.beginPath(); const pos = getPos(e); ctx.moveTo(pos.x, pos.y); }
     function moveDraw(e) { if (!drawing) return; e.preventDefault(); const pos = getPos(e); ctx.lineWidth = 2; ctx.lineCap = 'round'; ctx.lineTo(pos.x, pos.y); ctx.stroke(); }
     function endDraw() { drawing = false; }
 
     canvas.addEventListener('mousedown', startDraw); canvas.addEventListener('mousemove', moveDraw); canvas.addEventListener('mouseup', endDraw);
     canvas.addEventListener('touchstart', startDraw); canvas.addEventListener('touchmove', moveDraw); canvas.addEventListener('touchend', endDraw);
-    function clearSig() { ctx.clearRect(0,0,canvas.width,canvas.height); }
+    
+    function clearSig() { 
+        ctx.clearRect(0,0,canvas.width,canvas.height); 
+        hasSigned = false; 
+    }
 
 
     // --- MAIN SAVE FUNCTION ---
     function saveEntry() {
         const name = document.getElementById('nurseName').value;
+        const station = document.getElementById('stationSelect').value;
+        
+        if(!station) return alert("Please select a Station!");
         if(!name) return alert("Nurse name required");
+        if(!hasSigned) return alert("⚠️ Signature Required to Verify Inventory."); // ANTI-TRIP 1
+        
+        // ANTI-TRIP 2: CONFIRMATION
+        if(!confirm(`Verify Submission:\n\nStation: ${station}\nNurse: ${name}\n\nIs this correct?`)) {
+            return;
+        }
+
         const submitBtn = document.querySelector('.btn-submit');
         submitBtn.innerHTML = "Submitting..."; submitBtn.disabled = true;
 
@@ -362,6 +449,7 @@
 
         const payload = {
             timestamp: new Date().toLocaleString(),
+            station: station, 
             nurseName: name.toUpperCase(),
             shift: document.getElementById('shift').value,
             items: capturedItems,
@@ -377,7 +465,7 @@
         .then(() => {
             alert("✅ Successfully Saved to Database!");
             const logs = JSON.parse(localStorage.getItem('tdmh_logs_v4')) || [];
-            logs.unshift({ time: new Date().toLocaleString(), name: name.toUpperCase(), shift: payload.shift });
+            logs.unshift({ time: new Date().toLocaleString(), station: station, name: name.toUpperCase(), shift: payload.shift });
             localStorage.setItem('tdmh_logs_v4', JSON.stringify(logs));
             renderHistory();
             clearSig();
@@ -394,7 +482,7 @@
 
     function renderHistory() {
         const logs = JSON.parse(localStorage.getItem('tdmh_logs_v4')) || [];
-        document.getElementById('historyBody').innerHTML = logs.map(l => `<tr><td>${l.time}</td><td>${l.name}</td><td>${l.shift}</td><td>✅ SUBMITTED</td></tr>`).join('');
+        document.getElementById('historyBody').innerHTML = logs.map(l => `<tr><td>${l.time}</td><td>${l.station}</td><td>${l.name}</td><td>${l.shift}</td><td>✅ SUBMITTED</td></tr>`).join('');
     }
     renderHistory();
 </script>
