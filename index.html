@@ -32,16 +32,19 @@
 
         .nav-brand { padding: 40px 20px 30px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1); }
         
-        /* LOGO STYLE: Big & Visible */
+        /* LOGO STYLE: Bigger + Glassmorphism Effect */
         .nav-logo { 
-            width: 180px; 
+            width: 220px; /* Increased size */
             height: auto; 
             margin-bottom: 15px; 
             filter: drop-shadow(0 4px 8px rgba(0,0,0,0.4));
-            background: rgba(255, 255, 255, 0.95); /* Solid white background */
+            /* Frosted Glass Effect */
+            background: rgba(255, 255, 255, 0.2); 
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
             padding: 15px;
             border-radius: 12px;
-            border: 2px solid rgba(255, 255, 255, 1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
         }
 
         .nav-links { list-style: none; padding: 20px 0; margin: 0; }
@@ -64,14 +67,23 @@
         .btn-submit { background: var(--secondary); color: white; padding: 15px; border: none; border-radius: 8px; font-weight: 700; width: 100%; cursor: pointer; font-size: 16px; margin-top: 20px; transition: 0.2s; }
         .btn-submit:hover { background: var(--primary); transform: translateY(-1px); }
         
-        #sig-canvas { border: 2px dashed #cbd5e1; border-radius: 8px; background: #fff; cursor: crosshair; touch-action: none; width: 100%; max-width: 500px; }
+        /* SIGNATURE CANVAS */
+        #sig-canvas { 
+            border: 2px dashed #cbd5e1; 
+            border-radius: 8px; 
+            background: #fff; 
+            cursor: crosshair; 
+            touch-action: none; 
+            width: 100%; 
+            max-width: 600px; 
+        }
         
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         @media screen and (max-width: 768px) {
             nav { width: 70px; }
             .nav-brand h3, .nav-item span { display: none; }
-            .nav-logo { width: 45px; margin-bottom: 5px; padding: 5px; } 
+            .nav-logo { width: 50px; margin-bottom: 5px; padding: 5px; } 
             .nav-item { padding: 15px; justify-content: center; }
             main { margin-left: 70px; padding: 15px; }
             .app-card { padding: 15px; }
@@ -127,7 +139,7 @@
 
             <div style="margin-top:20px;">
                 <label>Nurse Signature</label><br>
-                <canvas id="sig-canvas" height="150"></canvas><br>
+                <canvas id="sig-canvas" height="260"></canvas><br>
                 <button class="no-print" onclick="clearSig()" style="border:none; color:red; background:none; cursor:pointer; font-size:12px;"><i class="fas fa-trash"></i> Clear Signature</button>
             </div>
             <button class="btn-submit" onclick="saveEntry()">Complete & Verify Submission</button>
@@ -378,4 +390,3 @@
 
 </body>
 </html>
-
