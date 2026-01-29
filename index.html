@@ -20,29 +20,13 @@
 
         body { font-family: 'Inter', sans-serif; background-color: var(--bg-light); margin: 0; display: flex; min-height: 100vh; }
         
-        nav { 
-            width: 260px; 
-            background: linear-gradient(to bottom, rgba(15, 23, 42, 0.92), rgba(12, 74, 110, 0.85)), url('images/tdmh-background.jpg');
-            background-size: cover; background-position: center; color: white; position: fixed; height: 100vh; 
-            display: flex; flex-direction: column; z-index: 1000; box-shadow: 4px 0 20px rgba(0,0,0,0.2);
-        }
-
+        nav { width: 260px; background: linear-gradient(to bottom, rgba(15, 23, 42, 0.92), rgba(12, 74, 110, 0.85)), url('images/tdmh-background.jpg'); background-size: cover; color: white; position: fixed; height: 100vh; display: flex; flex-direction: column; z-index: 1000; box-shadow: 4px 0 20px rgba(0,0,0,0.2); }
         .mobile-header { display: none; }
-
         main { margin-left: 260px; flex-grow: 1; padding: 40px; width: 100%; transition: 0.3s; }
         .app-card { background: white; border-radius: 12px; padding: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); border-top: 8px solid var(--primary); }
 
         .nav-brand { padding: 40px 20px 30px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; flex-direction: column; align-items: center;}
-        
-        .nav-logo { 
-            width: 180px; height: auto; margin-bottom: 15px; 
-            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.4));
-            background: rgba(255, 255, 255, 0.65); 
-            backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-            padding: 15px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.5);
-            cursor: pointer; 
-        }
-
+        .nav-logo { width: 180px; height: auto; margin-bottom: 15px; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.4)); background: rgba(255, 255, 255, 0.65); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); padding: 15px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.5); cursor: pointer; }
         .nav-links { list-style: none; padding: 20px 0; margin: 0; width: 100%; }
         .nav-item { padding: 15px 25px; display: flex; align-items: center; gap: 12px; cursor: pointer; color: #cbd5e1; transition: 0.3s; }
         .nav-item.active { color: white; background: rgba(255,255,255,0.1); border-left: 4px solid #38bdf8; backdrop-filter: blur(5px); }
@@ -64,9 +48,13 @@
         .btn-submit:hover { background: var(--primary); transform: translateY(-1px); }
         
         #sig-canvas { border: 2px dashed #cbd5e1; border-radius: 8px; background: #fff; cursor: crosshair; touch-action: none; width: 100%; max-width: 600px; }
-        
-        /* LOADING STATE */
         .loading-input { background-color: #e2e8f0; color: #94a3b8; cursor: wait; }
+
+        /* --- AUDIT MODAL STYLE --- */
+        #auditModal { display:none; position:fixed; z-index:2000; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.6); align-items:center; justify-content:center; }
+        .audit-content { background:white; width:90%; max-width:600px; max-height:80vh; overflow-y:auto; border-radius:12px; padding:20px; position:relative; animation: fadeIn 0.3s; }
+        .audit-close { position:absolute; right:20px; top:15px; font-size:24px; cursor:pointer; color:#64748b; }
+        .audit-header { border-bottom:1px solid #e2e8f0; padding-bottom:15px; margin-bottom:15px; }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
@@ -78,16 +66,14 @@
             .nav-item { flex-direction: column; padding: 5px; font-size: 10px; gap: 4px; border-left: none; width: 100%; justify-content: center; }
             .nav-item i { font-size: 18px; margin-bottom: 2px; }
             .nav-item.active { border-left: none; border-top: 3px solid #38bdf8; background: rgba(255,255,255,0.05); }
-            
             .mobile-header { display: flex; justify-content: center; align-items: center; padding: 15px; background: var(--sidebar-bg); background: linear-gradient(to right, rgba(15, 23, 42, 0.95), rgba(12, 74, 110, 0.9)), url('images/tdmh-background.jpg'); background-size: cover; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
             .mobile-logo { width: 140px; background: rgba(255, 255, 255, 0.65); padding: 8px; border-radius: 8px; backdrop-filter: blur(5px); cursor: pointer; }
-            
             main { margin-left: 0; width: 100%; padding: 15px; padding-bottom: 80px; box-sizing: border-box; }
             .app-card { padding: 15px; }
             .qty-input { width: 50px; }
             input[type="date"] { width: 100%; min-width: 100px; }
         }
-        @media print { nav, .mobile-header, .no-print, .btn-submit { display: none !important; } main { margin: 0; padding: 0; } }
+        @media print { nav, .mobile-header, .no-print, .btn-submit, #auditModal { display: none !important; } main { margin: 0; padding: 0; } }
     </style>
 </head>
 <body>
@@ -171,8 +157,8 @@
             </div>
             <div style="overflow-x: auto;">
                 <table id="historyTable">
-                    <thead><tr><th>Time</th><th>Nurse</th><th>Shift</th></tr></thead>
-                    <tbody id="historyBody"><tr><td colspan="3" style="text-align:center;">Select Station first...</td></tr></tbody>
+                    <thead><tr><th>Time</th><th>Nurse</th><th>Shift</th><th>Action</th></tr></thead>
+                    <tbody id="historyBody"><tr><td colspan="4" style="text-align:center;">Select Station first...</td></tr></tbody>
                 </table>
             </div>
         </div>
@@ -183,8 +169,23 @@
     </section>
 </main>
 
+<div id="auditModal">
+    <div class="audit-content">
+        <span class="audit-close" onclick="closeAudit()">&times;</span>
+        <div class="audit-header">
+            <h3 style="margin:0; color:var(--primary);">Report Details</h3>
+            <p id="audit-meta" style="margin:5px 0 0; color:#64748b; font-size:13px;"></p>
+        </div>
+        <div style="overflow-x:auto;">
+            <table style="width:100%; border-collapse:collapse;">
+                <thead><tr><th>Item</th><th>Qty</th><th>Expiry</th></tr></thead>
+                <tbody id="audit-body"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
 <script>
-    // ITEMS - Removed hardcoded dates (set to empty string so they load from sheet)
     const items = [
         { name: "Adenosine 6mg/2ml Vial", qty: 1, alert: false, exp: "" },
         { name: "Amiodarone 150mg/3ml ampule", qty: 2, alert: false, exp: "" },
@@ -263,7 +264,7 @@
     const invBody = document.getElementById('inventoryBody');
     const expBody = document.getElementById('expiryBody');
 
-    // Load Items with inputs
+    // Load Items
     items.forEach((item, idx) => {
         const row = document.createElement('tr');
         if(item.alert) row.className = 'high-alert';
@@ -315,21 +316,16 @@
         const station = document.getElementById('stationSelect').value;
         if(!station) return;
         
-        // 1. Fetch History
         fetchHistory(station);
-        
-        // 2. Fetch Last Expiry Dates (to auto-fill expiry)
-        // Only autofill expiry if fields are empty
         fetchLastData(station, false); 
     }
 
-    // --- FETCH HISTORY (FROM GOOGLE SHEET) ---
     // PASTE NEW SCRIPT URL HERE
     const scriptURL = 'https://script.google.com/macros/s/AKfycbzIygJDkcD6GcxbfbwGPNvbmNNRC7kvhuYb1ylkfUyIyskKuATreB-PVEteG5H_4Vo/exec';
 
     function fetchHistory(station) {
         document.getElementById('history-station-label').innerText = "Loading history for " + station + "...";
-        document.getElementById('historyBody').innerHTML = "<tr><td colspan='3'>Loading...</td></tr>";
+        document.getElementById('historyBody').innerHTML = "<tr><td colspan='4'>Loading...</td></tr>";
 
         fetch(scriptURL + '?action=history&station=' + encodeURIComponent(station))
         .then(response => response.json())
@@ -337,17 +333,48 @@
             if(res.status === 'success') {
                 document.getElementById('history-station-label').innerText = "History for: " + station;
                 if(res.history.length === 0) {
-                    document.getElementById('historyBody').innerHTML = "<tr><td colspan='3'>No history found.</td></tr>";
+                    document.getElementById('historyBody').innerHTML = "<tr><td colspan='4'>No history found.</td></tr>";
                 } else {
-                    document.getElementById('historyBody').innerHTML = res.history.map(l => 
-                        `<tr><td>${l.time}</td><td>${l.nurse}</td><td>${l.shift}</td></tr>`
+                    document.getElementById('historyBody').innerHTML = res.history.map((l, i) => 
+                        `<tr>
+                            <td>${l.time}</td>
+                            <td>${l.nurse}</td>
+                            <td>${l.shift}</td>
+                            <td><button onclick="viewAudit('${station}', ${i})" style="padding:4px 8px; font-size:11px; cursor:pointer; background:var(--secondary); color:white; border:none; border-radius:4px;">VIEW</button></td>
+                        </tr>`
                     ).join('');
                 }
             }
         });
     }
 
-    // --- SECRET CLICK HANDLER (AUTO FILL) ---
+    // --- AUDIT VIEW FUNCTION ---
+    function viewAudit(station, index) {
+        document.getElementById('auditModal').style.display = 'flex';
+        document.getElementById('audit-body').innerHTML = '<tr><td colspan="3">Loading data...</td></tr>';
+        
+        fetch(scriptURL + '?action=specificLog&station=' + encodeURIComponent(station) + '&index=' + index)
+        .then(response => response.json())
+        .then(res => {
+            if(res.status === 'success') {
+                document.getElementById('audit-meta').innerText = `${res.meta.time} | ${res.meta.nurse} | ${res.meta.shift}`;
+                let rows = '';
+                items.forEach((item, idx) => {
+                    let qty = res.qty[idx] || "0";
+                    let exp = (res.expiry && res.expiry[idx]) ? res.expiry[idx] : "-";
+                    // Only show if quantity > 0 OR expiry exists
+                    // if(qty !== "0" || exp !== "-") { 
+                        rows += `<tr><td>${item.name}</td><td>${qty}</td><td>${exp}</td></tr>`;
+                    // }
+                });
+                document.getElementById('audit-body').innerHTML = rows;
+            }
+        });
+    }
+
+    function closeAudit() { document.getElementById('auditModal').style.display = 'none'; }
+
+    // --- SECRET CLICK HANDLER ---
     let clickCount = 0;
     let clickTimer = null;
 
@@ -370,36 +397,32 @@
         const pass = prompt("🔐 HEAD NURSE ACCESS\nEnter Admin Password to Auto-Fill:");
         if(pass === "TDMHCQI/NSO2025") {
             alert("✅ Access Granted. Fetching data...");
-            fetchLastData(station, true); // True = Fill Quantities too
+            fetchLastData(station, true);
         } else if (pass !== null) {
             alert("❌ Access Denied.");
         }
     }
 
-    // --- UNIVERSAL FETCH DATA (Qunatity OR Dates) ---
+    // --- UNIVERSAL FETCH DATA ---
     function fetchLastData(station, fillQty) {
         const qtyInputs = document.querySelectorAll('.qty-input');
         const expInputs = document.querySelectorAll('.exp-input');
         
-        if(fillQty) { // Visual feedback only if we are filling qty
+        if(fillQty) { 
             qtyInputs.forEach(i => { i.disabled = true; i.classList.add('loading-input'); i.value = "..."; });
         }
 
         fetch(scriptURL + '?action=lastData&station=' + encodeURIComponent(station))
         .then(response => response.json())
         .then(res => {
-            // Restore inputs
             if(fillQty) qtyInputs.forEach(i => { i.disabled = false; i.classList.remove('loading-input'); });
 
             if(res.status === 'success') {
-                // 1. Always Fill Expiration Dates (Persistence)
                 if(res.expiry && res.expiry.length > 0) {
                     expInputs.forEach((input, index) => {
                         if(res.expiry[index]) input.value = res.expiry[index];
                     });
                 }
-
-                // 2. Fill Quantity ONLY if Secret Mode
                 if(fillQty && res.qty) {
                     qtyInputs.forEach((input, index) => {
                         if(res.qty[index] !== undefined) {
@@ -411,7 +434,7 @@
                     });
                 }
             } else if (fillQty) {
-                qtyInputs.forEach(i => i.value = ""); // Clear if no data
+                qtyInputs.forEach(i => i.value = "");
             }
         })
         .catch(err => {
@@ -466,7 +489,7 @@
             const inputs = document.querySelectorAll('.qty-input');
             const expInputs = document.querySelectorAll('.exp-input');
             const actualVal = inputs[index].value || 0; 
-            const expVal = expInputs[index].value || ""; // Capture Expiry
+            const expVal = expInputs[index].value || ""; 
             return { name: item.name, qty: item.qty, actual: actualVal, exp: expVal };
         });
 
@@ -487,14 +510,10 @@
         })
         .then(() => {
             alert("✅ Saved! Expiry dates updated for " + station);
-            // Refresh history to show new log immediately
             fetchHistory(station); 
-            
             clearSig();
             document.getElementById('nurseName').value = "";
             document.querySelectorAll('.qty-input').forEach(i => { i.value = ""; i.classList.remove('qty-low'); });
-            // Do NOT clear expiry inputs, keep them for convenience or clear if preferred?
-            // document.querySelectorAll('.exp-input').forEach(i => i.value = ""); // Uncomment to clear dates
             document.querySelectorAll('[id^="stat-"]').forEach(s => s.innerHTML = "PENDING");
             submitBtn.innerHTML = "Complete & Verify Submission"; submitBtn.disabled = false;
         })
