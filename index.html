@@ -264,7 +264,7 @@
     const invBody = document.getElementById('inventoryBody');
     const expBody = document.getElementById('expiryBody');
 
-    // Load Items
+    // Load Items with inputs
     items.forEach((item, idx) => {
         const row = document.createElement('tr');
         if(item.alert) row.className = 'high-alert';
@@ -362,10 +362,7 @@
                 items.forEach((item, idx) => {
                     let qty = res.qty[idx] || "0";
                     let exp = (res.expiry && res.expiry[idx]) ? res.expiry[idx] : "-";
-                    // Only show if quantity > 0 OR expiry exists
-                    // if(qty !== "0" || exp !== "-") { 
-                        rows += `<tr><td>${item.name}</td><td>${qty}</td><td>${exp}</td></tr>`;
-                    // }
+                    rows += `<tr><td>${item.name}</td><td>${qty}</td><td>${exp}</td></tr>`;
                 });
                 document.getElementById('audit-body').innerHTML = rows;
             }
@@ -418,11 +415,16 @@
             if(fillQty) qtyInputs.forEach(i => { i.disabled = false; i.classList.remove('loading-input'); });
 
             if(res.status === 'success') {
+                // 1. Fill Expiry (PERSISTENT)
                 if(res.expiry && res.expiry.length > 0) {
                     expInputs.forEach((input, index) => {
-                        if(res.expiry[index]) input.value = res.expiry[index];
+                        if(res.expiry[index]) input.value = formatDateForInput(res.expiry[index]);
                     });
+                    // UPDATE MONITOR after getting dates
+                    updateExpiryMonitor();
                 }
+
+                // 2. Fill Qty (ONLY SECRET)
                 if(fillQty && res.qty) {
                     qtyInputs.forEach((input, index) => {
                         if(res.qty[index] !== undefined) {
@@ -441,6 +443,52 @@
             console.error(err);
             if(fillQty) qtyInputs.forEach(i => { i.disabled = false; i.classList.remove('loading-input'); i.value = ""; });
         });
+    }
+
+    // --- DATE FORMATTER (The Fix for "Invisible Dates") ---
+    function formatDateForInput(dateString) {
+        if (!dateString) return "";
+        // If it's already YYYY-MM-DD, return it
+        if (dateString.match(/^\d{4}-\d{2}-\d{2}$/)) return dateString;
+        
+        // If it's a full ISO string (2026-12-05T00:00...), split it
+        const dateObj = new Date(dateString);
+        if (isNaN(dateObj.getTime())) return ""; // Invalid date
+        
+        return dateObj.toISOString().split('T')[0];
+    }
+
+    // --- EXPIRY MONITOR UPDATE ---
+    function updateExpiryMonitor() {
+        const expBody = document.getElementById('expiryBody');
+        expBody.innerHTML = ""; // Clear current list
+        
+        items.forEach((item, idx) => {
+            // Read from the actual input field (which now has the fetched date)
+            const inputVal = document.getElementById('exp-' + idx).value;
+            
+            if(inputVal) {
+                const expDate = new Date(inputVal);
+                const today = new Date();
+                const monthsDiff = (expDate - today) / (1000 * 60 * 60 * 24 * 30);
+                
+                if(monthsDiff < 6) {
+                    let expStyle = monthsDiff < 3 ? 'color:red; font-weight:bold;' : 'color:orange;';
+                    let expText = monthsDiff < 3 ? 'CRITICAL' : 'MONITOR';
+                    
+                    const row = `<tr>
+                        <td>${item.name}</td>
+                        <td>${inputVal}</td>
+                        <td style="${expStyle}">${expText}</td>
+                    </tr>`;
+                    expBody.insertAdjacentHTML('beforeend', row);
+                }
+            }
+        });
+        
+        if(expBody.innerHTML === "") {
+            expBody.innerHTML = "<tr><td colspan='3' style='text-align:center; color:#94a3b8;'>No expiring items found for this station.</td></tr>";
+        }
     }
 
     // --- SIGNATURE PAD ---
