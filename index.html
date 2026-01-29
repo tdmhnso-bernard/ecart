@@ -20,7 +20,6 @@
 
         body { font-family: 'Inter', sans-serif; background-color: var(--bg-light); margin: 0; display: flex; min-height: 100vh; }
         
-        /* --- DESKTOP SIDEBAR --- */
         nav { 
             width: 260px; 
             background: linear-gradient(to bottom, rgba(15, 23, 42, 0.92), rgba(12, 74, 110, 0.85)), url('images/tdmh-background.jpg');
@@ -33,7 +32,6 @@
         main { margin-left: 260px; flex-grow: 1; padding: 40px; width: 100%; transition: 0.3s; }
         .app-card { background: white; border-radius: 12px; padding: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); border-top: 8px solid var(--primary); }
 
-        /* --- LOGO --- */
         .nav-brand { padding: 40px 20px 30px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; flex-direction: column; align-items: center;}
         
         .nav-logo { 
@@ -42,7 +40,7 @@
             background: rgba(255, 255, 255, 0.65); 
             backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
             padding: 15px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.5);
-            cursor: pointer; /* Makes it clickable */
+            cursor: pointer; 
         }
 
         .nav-links { list-style: none; padding: 20px 0; margin: 0; width: 100%; }
@@ -50,7 +48,6 @@
         .nav-item.active { color: white; background: rgba(255,255,255,0.1); border-left: 4px solid #38bdf8; backdrop-filter: blur(5px); }
         .nav-item:hover { color: white; background: rgba(255,255,255,0.05); }
 
-        /* UI ELEMENTS */
         .view-section { display: none; }
         .view-section.active { display: block; animation: fadeIn 0.4s ease; }
         table { width: 100%; border-collapse: collapse; margin-top: 10px; }
@@ -126,7 +123,7 @@
             <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:15px; margin-bottom:20px; background:#f1f5f9; padding:15px; border-radius:8px;">
                 <div>
                     <label>Station / Ward</label><br>
-                    <select id="stationSelect" style="width:95%; padding:8px; border:1px solid #cbd5e1; border-radius:4px; font-weight:bold; color:var(--primary);">
+                    <select id="stationSelect" onchange="handleStationChange()" style="width:95%; padding:8px; border:1px solid #cbd5e1; border-radius:4px; font-weight:bold; color:var(--primary);">
                         <option value="">-- Select Station --</option>
                         <option>Station 3</option>
                         <option>Station 4B</option>
@@ -167,14 +164,15 @@
     <section id="history-view" class="view-section">
         <div class="app-card">
             <h2>Verification History</h2>
+            <p id="history-station-label" style="color:var(--secondary); font-size:14px; margin-top:-10px; margin-bottom:15px;">Select a station in Checklist to see history.</p>
             <div class="no-print" style="position:relative; margin-bottom: 15px;">
                 <i class="fas fa-search" style="position:absolute; left:15px; top:13px; color:#94a3b8;"></i>
                 <input type="text" class="search-bar" id="historySearch" placeholder="Search history..." onkeyup="filterHistory()">
             </div>
             <div style="overflow-x: auto;">
                 <table id="historyTable">
-                    <thead><tr><th>Time</th><th>Station</th><th>Nurse</th><th>Shift</th><th>Status</th></tr></thead>
-                    <tbody id="historyBody"></tbody>
+                    <thead><tr><th>Time</th><th>Nurse</th><th>Shift</th></tr></thead>
+                    <tbody id="historyBody"><tr><td colspan="3" style="text-align:center;">Select Station first...</td></tr></tbody>
                 </table>
             </div>
         </div>
@@ -186,45 +184,46 @@
 </main>
 
 <script>
+    // ITEMS - Removed hardcoded dates (set to empty string so they load from sheet)
     const items = [
-        { name: "Adenosine 6mg/2ml Vial", qty: 1, alert: false, exp: "2026-05-12" },
-        { name: "Amiodarone 150mg/3ml ampule", qty: 2, alert: false, exp: "2026-08-20" },
-        { name: "Anti-tetanus serum", qty: 1, alert: false, exp: "2025-10-10" },
-        { name: "Aspirin 325mg tablet", qty: 4, alert: false, exp: "2026-12-01" },
-        { name: "Atropine 1mg/ml ampule", qty: 4, alert: false, exp: "2025-06-15" },
-        { name: "B-adrenergic agonists (Salbutamol)", qty: 5, alert: false, exp: "2026-03-30" },
-        { name: "Diazepam 10mg/2ml (High Alert)", qty: 2, alert: true, exp: "2025-02-15" },
-        { name: "Midazolam (High Alert)", qty: 2, alert: true, exp: "2025-11-20" },
-        { name: "Calcium Gluconate 10%", qty: 2, alert: false, exp: "2026-01-10" },
-        { name: "Clopidogrel 75mg tablet", qty: 4, alert: false, exp: "2026-05-05" },
-        { name: "D5W 250ml", qty: 4, alert: false, exp: "2027-02-01" },
-        { name: "D50W 50mg/vial", qty: 2, alert: false, exp: "2026-04-12" },
-        { name: "Digoxin 0.5mg/2ml ampule", qty: 2, alert: false, exp: "2025-12-30" },
-        { name: "Diphenhydramine 50mg/ml amp", qty: 2, alert: false, exp: "2026-06-25" },
-        { name: "Dobutamine 250mg/5ml amp", qty: 2, alert: false, exp: "2025-09-18" },
-        { name: "Dopamine 200mg/5ml amp", qty: 2, alert: false, exp: "2025-08-05" },
-        { name: "Epinephrine 1mg/ml ampule", qty: 20, alert: false, exp: "2027-10-10" },
-        { name: "Furosemide 20mg/2ml amp", qty: 4, alert: false, exp: "2026-03-12" },
-        { name: "Haloperidol 50mg/ml amp", qty: 1, alert: false, exp: "2025-02-28" },
-        { name: "Hydrocortisone 250mg/2ml vial", qty: 2, alert: false, exp: "2026-11-15" },
-        { name: "Lidocaine 10% spray", qty: 1, alert: false, exp: "2025-10-20" },
-        { name: "Lidocaine 2% solution vial", qty: 4, alert: false, exp: "2026-04-04" },
-        { name: "Magnesium sulfate 1g/2ml amp", qty: 1, alert: false, exp: "2025-03-01" },
-        { name: "Mannitol 20% solution 500ml", qty: 1, alert: false, exp: "2026-01-01" },
-        { name: "Methylprednisolone 4mg/tab", qty: 1, alert: false, exp: "2025-07-20" },
-        { name: "Metoclopramide 10mg/2ml amp", qty: 1, alert: false, exp: "2026-02-15" },
-        { name: "Morphine Sulfate (High Alert)", qty: 1, alert: true, exp: "2025-04-15" },
-        { name: "Nitroglycerin/ISDN 5mg SL", qty: 2, alert: false, exp: "2025-06-30" },
-        { name: "Noradrenaline 2mg/2ml amp", qty: 4, alert: false, exp: "2026-11-22" },
-        { name: "Paracetamol 300mg amp (IV)", qty: 3, alert: false, exp: "2025-08-15" },
-        { name: "Phenobarbital (High Alert)", qty: 1, alert: true, exp: "2025-01-10" },
-        { name: "Phenytoin 100mg cap/amp", qty: 1, alert: false, exp: "2026-12-05" },
-        { name: "Plain LRS 1L/bottle", qty: 1, alert: false, exp: "2027-01-01" },
-        { name: "Plain NSS 1L/bottle", qty: 1, alert: false, exp: "2027-05-15" },
-        { name: "Potassium Chloride (High Alert)", qty: 2, alert: true, exp: "2025-01-20" },
-        { name: "Sodium Bicarbonate 50mEq", qty: 4, alert: false, exp: "2025-09-30" },
-        { name: "Verapamil 5mg/2ml ampule", qty: 1, alert: false, exp: "2025-10-15" },
-        { name: "Vitamin B1/6/12 10ml vial", qty: 1, alert: false, exp: "2026-03-10" },
+        { name: "Adenosine 6mg/2ml Vial", qty: 1, alert: false, exp: "" },
+        { name: "Amiodarone 150mg/3ml ampule", qty: 2, alert: false, exp: "" },
+        { name: "Anti-tetanus serum", qty: 1, alert: false, exp: "" },
+        { name: "Aspirin 325mg tablet", qty: 4, alert: false, exp: "" },
+        { name: "Atropine 1mg/ml ampule", qty: 4, alert: false, exp: "" },
+        { name: "B-adrenergic agonists (Salbutamol)", qty: 5, alert: false, exp: "" },
+        { name: "Diazepam 10mg/2ml (High Alert)", qty: 2, alert: true, exp: "" },
+        { name: "Midazolam (High Alert)", qty: 2, alert: true, exp: "" },
+        { name: "Calcium Gluconate 10%", qty: 2, alert: false, exp: "" },
+        { name: "Clopidogrel 75mg tablet", qty: 4, alert: false, exp: "" },
+        { name: "D5W 250ml", qty: 4, alert: false, exp: "" },
+        { name: "D50W 50mg/vial", qty: 2, alert: false, exp: "" },
+        { name: "Digoxin 0.5mg/2ml ampule", qty: 2, alert: false, exp: "" },
+        { name: "Diphenhydramine 50mg/ml amp", qty: 2, alert: false, exp: "" },
+        { name: "Dobutamine 250mg/5ml amp", qty: 2, alert: false, exp: "" },
+        { name: "Dopamine 200mg/5ml amp", qty: 2, alert: false, exp: "" },
+        { name: "Epinephrine 1mg/ml ampule", qty: 20, alert: false, exp: "" },
+        { name: "Furosemide 20mg/2ml amp", qty: 4, alert: false, exp: "" },
+        { name: "Haloperidol 50mg/ml amp", qty: 1, alert: false, exp: "" },
+        { name: "Hydrocortisone 250mg/2ml vial", qty: 2, alert: false, exp: "" },
+        { name: "Lidocaine 10% spray", qty: 1, alert: false, exp: "" },
+        { name: "Lidocaine 2% solution vial", qty: 4, alert: false, exp: "" },
+        { name: "Magnesium sulfate 1g/2ml amp", qty: 1, alert: false, exp: "" },
+        { name: "Mannitol 20% solution 500ml", qty: 1, alert: false, exp: "" },
+        { name: "Methylprednisolone 4mg/tab", qty: 1, alert: false, exp: "" },
+        { name: "Metoclopramide 10mg/2ml amp", qty: 1, alert: false, exp: "" },
+        { name: "Morphine Sulfate (High Alert)", qty: 1, alert: true, exp: "" },
+        { name: "Nitroglycerin/ISDN 5mg SL", qty: 2, alert: false, exp: "" },
+        { name: "Noradrenaline 2mg/2ml amp", qty: 4, alert: false, exp: "" },
+        { name: "Paracetamol 300mg amp (IV)", qty: 3, alert: false, exp: "" },
+        { name: "Phenobarbital (High Alert)", qty: 1, alert: true, exp: "" },
+        { name: "Phenytoin 100mg cap/amp", qty: 1, alert: false, exp: "" },
+        { name: "Plain LRS 1L/bottle", qty: 1, alert: false, exp: "" },
+        { name: "Plain NSS 1L/bottle", qty: 1, alert: false, exp: "" },
+        { name: "Potassium Chloride (High Alert)", qty: 2, alert: true, exp: "" },
+        { name: "Sodium Bicarbonate 50mEq", qty: 4, alert: false, exp: "" },
+        { name: "Verapamil 5mg/2ml ampule", qty: 1, alert: false, exp: "" },
+        { name: "Vitamin B1/6/12 10ml vial", qty: 1, alert: false, exp: "" },
         { name: "Insulin syringe (0.3cc/0.5cc)", qty: 10, alert: false, exp: "N/A" },
         { name: "1cc Syringe", qty: 10, alert: false, exp: "N/A" },
         { name: "3cc Syringe", qty: 10, alert: false, exp: "N/A" },
@@ -264,28 +263,16 @@
     const invBody = document.getElementById('inventoryBody');
     const expBody = document.getElementById('expiryBody');
 
-    // Load Items
+    // Load Items with inputs
     items.forEach((item, idx) => {
         const row = document.createElement('tr');
         if(item.alert) row.className = 'high-alert';
         
-        let expStyle = "";
-        let expText = "OK";
-        if(item.exp !== "N/A") {
-            const expDate = new Date(item.exp);
-            const monthsDiff = (expDate - today) / (1000*60*60*24*30);
-            if(monthsDiff < 6) {
-                expStyle = monthsDiff < 3 ? 'color:red; font-weight:bold;' : 'color:orange;';
-                expText = monthsDiff < 3 ? 'CRITICAL' : 'MONITOR';
-                expBody.insertAdjacentHTML('beforeend', `<tr><td>${item.name}</td><td>${item.exp}</td><td style="${expStyle}">${expText}</td></tr>`);
-            }
-        }
-
         row.innerHTML = `
             <td>${item.alert ? '⚠️ ' : ''}${item.name}</td>
             <td id="std-${idx}">${item.qty}</td>
             <td><input type="number" class="qty-input" placeholder="0" oninput="checkQty(this, ${idx})"></td>
-            <td><input type="date" class="exp-input" value="${item.exp !== 'N/A' ? item.exp : ''}"></td>
+            <td><input type="date" class="exp-input" id="exp-${idx}"></td>
             <td id="stat-${idx}" style="font-weight:bold; font-size:12px;">PENDING</td>
         `;
         invBody.appendChild(row);
@@ -323,17 +310,50 @@
         });
     }
 
-    // --- SECRET CLICK HANDLER ---
+    // --- MAIN HANDLER FOR STATION CHANGE ---
+    function handleStationChange() {
+        const station = document.getElementById('stationSelect').value;
+        if(!station) return;
+        
+        // 1. Fetch History
+        fetchHistory(station);
+        
+        // 2. Fetch Last Expiry Dates (to auto-fill expiry)
+        // Only autofill expiry if fields are empty
+        fetchLastData(station, false); 
+    }
+
+    // --- FETCH HISTORY (FROM GOOGLE SHEET) ---
+    // PASTE NEW SCRIPT URL HERE
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbzIygJDkcD6GcxbfbwGPNvbmNNRC7kvhuYb1ylkfUyIyskKuATreB-PVEteG5H_4Vo/exec';
+
+    function fetchHistory(station) {
+        document.getElementById('history-station-label').innerText = "Loading history for " + station + "...";
+        document.getElementById('historyBody').innerHTML = "<tr><td colspan='3'>Loading...</td></tr>";
+
+        fetch(scriptURL + '?action=history&station=' + encodeURIComponent(station))
+        .then(response => response.json())
+        .then(res => {
+            if(res.status === 'success') {
+                document.getElementById('history-station-label').innerText = "History for: " + station;
+                if(res.history.length === 0) {
+                    document.getElementById('historyBody').innerHTML = "<tr><td colspan='3'>No history found.</td></tr>";
+                } else {
+                    document.getElementById('historyBody').innerHTML = res.history.map(l => 
+                        `<tr><td>${l.time}</td><td>${l.nurse}</td><td>${l.shift}</td></tr>`
+                    ).join('');
+                }
+            }
+        });
+    }
+
+    // --- SECRET CLICK HANDLER (AUTO FILL) ---
     let clickCount = 0;
     let clickTimer = null;
 
     function handleSecretClick() {
         clickCount++;
-        
-        if(clickCount === 1) {
-            clickTimer = setTimeout(() => { clickCount = 0; }, 800); // Reset if not clicked fast enough
-        }
-        
+        if(clickCount === 1) clickTimer = setTimeout(() => { clickCount = 0; }, 800);
         if(clickCount === 3) {
             clearTimeout(clickTimer);
             clickCount = 0;
@@ -344,54 +364,66 @@
     function triggerSecretFetch() {
         const station = document.getElementById('stationSelect').value;
         if(!station) {
-            alert("⚠️ Please select a Station first, then click the logo 3 times.");
+            alert("⚠️ Please select a Station first.");
             return;
         }
-
-        const pass = prompt("🔐 HEAD NURSE ACCESS\nEnter Admin Password to Auto-Fill Last Entry:");
-        
+        const pass = prompt("🔐 HEAD NURSE ACCESS\nEnter Admin Password to Auto-Fill:");
         if(pass === "TDMHCQI/NSO2025") {
-            alert("✅ Access Granted. Fetching data for " + station + "...");
-            fetchLastData(station); // Call the fetch function
+            alert("✅ Access Granted. Fetching data...");
+            fetchLastData(station, true); // True = Fill Quantities too
         } else if (pass !== null) {
             alert("❌ Access Denied.");
         }
     }
 
-    // --- AUTO-FETCH FUNCTION ---
-    function fetchLastData(station) {
-        // Visual Feedback
-        const inputs = document.querySelectorAll('.qty-input');
-        inputs.forEach(i => { i.disabled = true; i.classList.add('loading-input'); i.value = "..."; });
+    // --- UNIVERSAL FETCH DATA (Qunatity OR Dates) ---
+    function fetchLastData(station, fillQty) {
+        const qtyInputs = document.querySelectorAll('.qty-input');
+        const expInputs = document.querySelectorAll('.exp-input');
+        
+        if(fillQty) { // Visual feedback only if we are filling qty
+            qtyInputs.forEach(i => { i.disabled = true; i.classList.add('loading-input'); i.value = "..."; });
+        }
 
-        // PASTE NEW SCRIPT URL HERE
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbzIygJDkcD6GcxbfbwGPNvbmNNRC7kvhuYb1ylkfUyIyskKuATreB-PVEteG5H_4Vo/exec';
-
-        fetch(scriptURL + '?station=' + encodeURIComponent(station))
+        fetch(scriptURL + '?action=lastData&station=' + encodeURIComponent(station))
         .then(response => response.json())
         .then(res => {
-            inputs.forEach((input, index) => {
-                input.disabled = false;
-                input.classList.remove('loading-input');
-                if(res.status === 'success' && res.data[index] !== undefined) {
-                    input.value = res.data[index];
-                    checkQty(input, index);
-                } else {
-                    input.value = ""; // No data found
+            // Restore inputs
+            if(fillQty) qtyInputs.forEach(i => { i.disabled = false; i.classList.remove('loading-input'); });
+
+            if(res.status === 'success') {
+                // 1. Always Fill Expiration Dates (Persistence)
+                if(res.expiry && res.expiry.length > 0) {
+                    expInputs.forEach((input, index) => {
+                        if(res.expiry[index]) input.value = res.expiry[index];
+                    });
                 }
-            });
+
+                // 2. Fill Quantity ONLY if Secret Mode
+                if(fillQty && res.qty) {
+                    qtyInputs.forEach((input, index) => {
+                        if(res.qty[index] !== undefined) {
+                            input.value = res.qty[index];
+                            checkQty(input, index);
+                        } else {
+                            input.value = "";
+                        }
+                    });
+                }
+            } else if (fillQty) {
+                qtyInputs.forEach(i => i.value = ""); // Clear if no data
+            }
         })
         .catch(err => {
             console.error(err);
-            inputs.forEach(i => { i.disabled = false; i.classList.remove('loading-input'); i.value = ""; });
-            alert("Connection Error. Could not fetch data.");
+            if(fillQty) qtyInputs.forEach(i => { i.disabled = false; i.classList.remove('loading-input'); i.value = ""; });
         });
     }
 
     // --- SIGNATURE PAD ---
     const canvas = document.getElementById('sig-canvas');
     const ctx = canvas.getContext('2d');
-    var hasSigned = false; // ANTI-TRIP FLAG
+    var hasSigned = false; 
     
     function resizeCanvas() {
         const ratio = Math.max(window.devicePixelRatio || 1, 1);
@@ -414,12 +446,7 @@
 
     canvas.addEventListener('mousedown', startDraw); canvas.addEventListener('mousemove', moveDraw); canvas.addEventListener('mouseup', endDraw);
     canvas.addEventListener('touchstart', startDraw); canvas.addEventListener('touchmove', moveDraw); canvas.addEventListener('touchend', endDraw);
-    
-    function clearSig() { 
-        ctx.clearRect(0,0,canvas.width,canvas.height); 
-        hasSigned = false; 
-    }
-
+    function clearSig() { ctx.clearRect(0,0,canvas.width,canvas.height); hasSigned = false; }
 
     // --- MAIN SAVE FUNCTION ---
     function saveEntry() {
@@ -428,24 +455,20 @@
         
         if(!station) return alert("Please select a Station!");
         if(!name) return alert("Nurse name required");
-        if(!hasSigned) return alert("⚠️ Signature Required to Verify Inventory."); // ANTI-TRIP 1
+        if(!hasSigned) return alert("⚠️ Signature Required."); 
         
-        // ANTI-TRIP 2: CONFIRMATION
-        if(!confirm(`Verify Submission:\n\nStation: ${station}\nNurse: ${name}\n\nIs this correct?`)) {
-            return;
-        }
+        if(!confirm(`Verify Submission:\n\nStation: ${station}\nNurse: ${name}\n\nIs this correct?`)) return;
 
         const submitBtn = document.querySelector('.btn-submit');
         submitBtn.innerHTML = "Submitting..."; submitBtn.disabled = true;
 
         const capturedItems = items.map((item, index) => {
             const inputs = document.querySelectorAll('.qty-input');
+            const expInputs = document.querySelectorAll('.exp-input');
             const actualVal = inputs[index].value || 0; 
-            return { name: item.name, qty: item.qty, actual: actualVal };
+            const expVal = expInputs[index].value || ""; // Capture Expiry
+            return { name: item.name, qty: item.qty, actual: actualVal, exp: expVal };
         });
-
-        // INTEGRATED URL HERE
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbzIygJDkcD6GcxbfbwGPNvbmNNRC7kvhuYb1ylkfUyIyskKuATreB-PVEteG5H_4Vo/exec';
 
         const payload = {
             timestamp: new Date().toLocaleString(),
@@ -463,28 +486,23 @@
             body: JSON.stringify(payload)
         })
         .then(() => {
-            alert("✅ Successfully Saved to Database!");
-            const logs = JSON.parse(localStorage.getItem('tdmh_logs_v4')) || [];
-            logs.unshift({ time: new Date().toLocaleString(), station: station, name: name.toUpperCase(), shift: payload.shift });
-            localStorage.setItem('tdmh_logs_v4', JSON.stringify(logs));
-            renderHistory();
+            alert("✅ Saved! Expiry dates updated for " + station);
+            // Refresh history to show new log immediately
+            fetchHistory(station); 
+            
             clearSig();
             document.getElementById('nurseName').value = "";
             document.querySelectorAll('.qty-input').forEach(i => { i.value = ""; i.classList.remove('qty-low'); });
+            // Do NOT clear expiry inputs, keep them for convenience or clear if preferred?
+            // document.querySelectorAll('.exp-input').forEach(i => i.value = ""); // Uncomment to clear dates
             document.querySelectorAll('[id^="stat-"]').forEach(s => s.innerHTML = "PENDING");
             submitBtn.innerHTML = "Complete & Verify Submission"; submitBtn.disabled = false;
         })
         .catch(error => {
-            alert("Error saving to database. Check internet connection.");
+            alert("Error saving. Check connection.");
             submitBtn.innerHTML = "Complete & Verify Submission"; submitBtn.disabled = false;
         });
     }
-
-    function renderHistory() {
-        const logs = JSON.parse(localStorage.getItem('tdmh_logs_v4')) || [];
-        document.getElementById('historyBody').innerHTML = logs.map(l => `<tr><td>${l.time}</td><td>${l.station}</td><td>${l.name}</td><td>${l.shift}</td><td>✅ SUBMITTED</td></tr>`).join('');
-    }
-    renderHistory();
 </script>
 
 </body>
